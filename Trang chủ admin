@@ -1,0 +1,1047 @@
+Dạ em sửa lại ngay ạ, "Cài đặt" phải nằm ở trên, chữ bác sĩ nằm ngang, và thêm icon chatbot:
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #E5E7EB;
+        }
+
+        .container {
+            width: 1492px;
+            height: 925px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        /* Sidebar - 210px × 925px */
+        .sidebar {
+            width: 210px;
+            height: 925px;
+            background: #2F56C0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            padding: 0 16px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .logo-icon::before,
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            background: #2F56C0;
+        }
+
+        .logo-icon::before {
+            width: 14px;
+            height: 2.5px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+
+        .logo-icon::after {
+            width: 2.5px;
+            height: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+
+        .logo-text {
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 1;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            opacity: 1;
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .menu-divider {
+            flex: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #F5F6F8;
+        }
+
+        /* Top Navigation - 64px */
+        .top-nav {
+            height: 64px;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .top-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-nav-logo-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .top-nav-logo-icon::before,
+        .top-nav-logo-icon::after {
+            content: '';
+            position: absolute;
+            background: #111827;
+        }
+
+        .top-nav-logo-icon::before {
+            width: 12px;
+            height: 2.2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+
+        .top-nav-logo-icon::after {
+            width: 2.2px;
+            height: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+
+        .top-nav-logo-text {
+            color: #111827;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 1;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .top-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 280px;
+            padding: 8px 16px 8px 36px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            background: #F9FAFB;
+            color: #111827;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-bar input::placeholder {
+            color: #99A1AF;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .search-bar input:focus {
+            border-color: #2F56C0;
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: #9CA3AF;
+        }
+
+        .notification-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-btn:hover {
+            background: #F3F4F6;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* Greeting Section */
+        .greeting-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .greeting h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .greeting p {
+            font-size: 13px;
+            color: #6B7280;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #111827;
+            border: 1px solid #E5E7EB;
+        }
+
+        .btn-outline:hover {
+            background: #F9FAFB;
+        }
+
+        .btn-primary {
+            background: #2F56C0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2847A0;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #F3F4F6;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+            font-family: 'Inter', sans-serif;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .stat-change.positive {
+            color: #10B981;
+        }
+
+        .stat-change.negative {
+            color: #EF4444;
+        }
+
+        .stat-change.neutral {
+            color: #6B7280;
+        }
+
+        /* Bottom Grid */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #F3F4F6;
+        }
+
+        .card-header {
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Appointment List */
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .appointment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .appointment-info {
+            flex: 1;
+        }
+
+        .appointment-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .appointment-details {
+            font-size: 12px;
+            color: #6B7280;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .appointment-status {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .appointment-status.confirmed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .appointment-status.pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        /* Doctor List */
+        .doctor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .doctor-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doctor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .doctor-info {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .doctor-specialty {
+            font-size: 12px;
+            color: #6B7280;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .doctor-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .doctor-status.active {
+            background: #10B981;
+        }
+
+        .doctor-status.busy {
+            background: #F59E0B;
+        }
+
+        /* Activity List */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: #111827;
+            margin-bottom: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #9CA3AF;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 200px;
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Chatbot Button */
+        .chatbot-button {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: #2F56C0;
+            border: none;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(47, 86, 192, 0.3);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .chatbot-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(47, 86, 192, 0.4);
+        }
+
+        .chatbot-button svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar - 210px × 925px -->
+        <div class="sidebar">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">CliniCare</div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="menu">
+                <button class="menu-item active">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Trang chủ</span>
+                </button>
+                <button class="menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"></line>
+                        <line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"></line>
+                        <line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round"></line>
+                    </svg>
+                    <span>Quản lý lịch hẹn</span>
+                </button>
+                <button class="menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Quản lý khoa và bác sĩ</span>
+                </button>
+                <button class="menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Quản lý chat bot</span>
+                </button>
+                <button class="menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Cài đặt</span>
+                </button>
+
+                <div class="menu-divider"></div>
+
+                <button class="menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation - 64px -->
+            <div class="top-nav">
+                <!-- Left side: Logo -->
+                <div class="top-nav-left">
+                    <div class="top-nav-logo-icon"></div>
+                    <div class="top-nav-logo-text">CliniCare</div>
+                </div>
+
+                <!-- Right side -->
+                <div class="top-nav-right">
+                    <!-- Search -->
+                    <div class="search-bar">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" stroke-width="2"></circle>
+                            <path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <input type="text" placeholder="Tìm kiếm khoa, bác sĩ...">
+                    </div>
+
+                    <!-- Notification -->
+                    <button class="notification-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+
+                    <!-- User -->
+                    <div class="user-section">
+                        <div class="user-avatar">A</div>
+                        <div class="user-name">Abc</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Greeting Section -->
+                <div class="greeting-section">
+                    <div class="greeting">
+                        <h1>Chào buổi sáng, Abc</h1>
+                        <p>Đây là tình hình hoạt động của phòng khám hôm nay</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-outline">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            Thêm bệnh nhân
+                        </button>
+                        <button class="btn btn-primary">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            Thêm lịch hẹn
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <!-- Card 1: Tổng số bệnh nhân -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Tổng số bệnh nhân hôm nay</div>
+                            <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                <svg fill="none" stroke="#3B82F6" viewBox="0 0 24 24" stroke-width="2">
+                                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">1,248</div>
+                        <div class="stat-change positive">↑ 12% so với hôm qua</div>
+                    </div>
+
+                    <!-- Card 2: Lịch hẹn hôm nay -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Lịch hẹn hôm nay</div>
+                            <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1);">
+                                <svg fill="none" stroke="#6366F1" viewBox="0 0 24 24" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-change neutral">8% so với hôm qua</div>
+                    </div>
+
+                    <!-- Card 3: Bác sĩ đang làm việc -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Bác sĩ đang làm việc</div>
+                            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                <svg fill="none" stroke="#10B981" viewBox="0 0 24 24" stroke-width="2">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change neutral"></div>
+                    </div>
+
+                    <!-- Card 4: Lịch đã hủy -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Lịch đã hủy hôm nay</div>
+                            <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1);">
+                                <svg fill="none" stroke="#EF4444" viewBox="0 0 24 24" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15" stroke-linecap="round"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15" stroke-linecap="round"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-change negative">Từ 24 lịch hẹn</div>
+                    </div>
+                </div>
+
+                <!-- Bottom Grid -->
+                <div class="bottom-grid">
+                    <!-- Left Column -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Lịch hẹn sắp tới -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Lịch hẹn sắp tới</div>
+                            </div>
+                            <div class="appointment-list">
+                                <div class="appointment-item">
+                                    <div class="appointment-avatar" style="background: #3B82F6;">SJ</div>
+                                    <div class="appointment-info">
+                                        <div class="appointment-name">Sarah Johnson</div>
+                                        <div class="appointment-details">09:00 • BS. Nguyễn Minh</div>
+                                    </div>
+                                    <div class="appointment-status confirmed">Đã xác nhận</div>
+                                </div>
+                                <div class="appointment-item">
+                                    <div class="appointment-avatar" style="background: #2F56C0;">DS</div>
+                                    <div class="appointment-info">
+                                        <div class="appointment-name">David Smith</div>
+                                        <div class="appointment-details">10:30 • BS. Trần Lan</div>
+                                    </div>
+                                    <div class="appointment-status confirmed">Đã xác nhận</div>
+                                </div>
+                                <div class="appointment-item">
+                                    <div class="appointment-avatar" style="background: #EC4899;">MG</div>
+                                    <div class="appointment-info">
+                                        <div class="appointment-name">Maria Garcia</div>
+                                        <div class="appointment-details">11:15 • BS. Nguyễn Minh</div>
+                                    </div>
+                                    <div class="appointment-status pending">Chờ</div>
+                                </div>
+                                <div class="appointment-item">
+                                    <div class="appointment-avatar" style="background: #8B5CF6;">JB</div>
+                                    <div class="appointment-info">
+                                        <div class="appointment-name">James Brown</div>
+                                        <div class="appointment-details">14:00 • BS. Lê Hương</div>
+                                    </div>
+                                    <div class="appointment-status confirmed">Đã xác nhận</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách bác sĩ -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Danh sách bác sĩ</div>
+                            </div>
+                            <div class="doctor-list">
+                                <div class="doctor-item">
+                                    <div class="doctor-avatar" style="background: #3B82F6;">NM</div>
+                                    <div class="doctor-info">
+                                        <div class="doctor-name">BS. Nguyễn Minh</div>
+                                        <div class="doctor-specialty">Tim mạch</div>
+                                    </div>
+                                    <div class="doctor-status active"></div>
+                                </div>
+                                <div class="doctor-item">
+                                    <div class="doctor-avatar" style="background: #2F56C0;">TL</div>
+                                    <div class="doctor-info">
+                                        <div class="doctor-name">BS. Trần Lan</div>
+                                        <div class="doctor-specialty">Nhi khoa</div>
+                                    </div>
+                                    <div class="doctor-status busy"></div>
+                                </div>
+                                <div class="doctor-item">
+                                    <div class="doctor-avatar" style="background: #10B981;">LH</div>
+                                    <div class="doctor-info">
+                                        <div class="doctor-name">BS. Lê Hương</div>
+                                        <div class="doctor-specialty">Thần kinh</div>
+                                    </div>
+                                    <div class="doctor-status active"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Thống kê bệnh nhân -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Thống kê bệnh nhân</div>
+                            </div>
+                            <div class="chart-container">
+                                <svg class="chart-svg" viewBox="0 0 400 180">
+                                    <!-- Grid lines -->
+                                    <line x1="40" y1="20" x2="40" y2="140" stroke="#E5E7EB" stroke-width="1"/>
+                                    <line x1="40" y1="140" x2="380" y2="140" stroke="#E5E7EB" stroke-width="1"/>
+                                    
+                                    <!-- Line chart -->
+                                    <polyline
+                                        fill="none"
+                                        stroke="#2F56C0"
+                                        stroke-width="2.5"
+                                        points="60,120 110,100 160,90 210,70 260,60 310,50 360,40"
+                                    />
+                                    
+                                    <!-- Points -->
+                                    <circle cx="60" cy="120" r="4" fill="#2F56C0"/>
+                                    <circle cx="110" cy="100" r="4" fill="#2F56C0"/>
+                                    <circle cx="160" cy="90" r="4" fill="#2F56C0"/>
+                                    <circle cx="210" cy="70" r="4" fill="#2F56C0"/>
+                                    <circle cx="260" cy="60" r="4" fill="#2F56C0"/>
+                                    <circle cx="310" cy="50" r="4" fill="#2F56C0"/>
+                                    <circle cx="360" cy="40" r="4" fill="#2F56C0"/>
+                                    
+                                    <!-- Labels -->
+                                    <text x="60" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">Jan</text>
+                                    <text x="110" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">Feb</text>
+                                    <text x="160" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">Mar</text>
+                                    <text x="210" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">Apr</text>
+                                    <text x="260" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">May</text>
+                                    <text x="360" y="160" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Inter">Jun</text>
+                                    
+                                    <!-- Y-axis values -->
+                                    <text x="30" y="45" font-size="10" fill="#9CA3AF" text-anchor="end" font-family="Inter">240</text>
+                                    <text x="30" y="85" font-size="10" fill="#9CA3AF" text-anchor="end" font-family="Inter">180</text>
+                                    <text x="30" y="125" font-size="10" fill="#9CA3AF" text-anchor="end" font-family="Inter">120</text>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Hoạt động gần đây -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Hoạt động gần đây</div>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                        <svg fill="none" stroke="#3B82F6" viewBox="0 0 24 24" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Lịch hẹn mới với BS. Nguyễn Minh</div>
+                                        <div class="activity-time">5 phút trước</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                        <svg fill="none" stroke="#10B981" viewBox="0 0 24 24" stroke-width="2">
+                                            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Bệnh nhân mới đăng ký: Maria Garcia</div>
+                                        <div class="activity-time">15 phút trước</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: rgba(139, 92, 246, 0.1);">
+                                        <svg fill="none" stroke="#8B5CF6" viewBox="0 0 24 24" stroke-width="2">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Hoàn thành lịch hẹn với BS. Trần Lan</div>
+                                        <div class="activity-time">2 giờ trước</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot Button -->
+        <button class="chatbot-button">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </button>
+    </div>
+</body>
+</html>

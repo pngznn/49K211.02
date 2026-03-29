@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CliniCare - Hệ thống quản lý bệnh viện</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F2F2F2;
+      color: #111827;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 240px;
+      height: 100vh;
+      background: #3152B8;
+      padding: 24px;
+      z-index: 30;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Header Styles */
+    .header {
+      position: fixed;
+      left: 240px;
+      top: 0;
+      right: 0;
+      height: 56px;
+      background: white;
+      border-bottom: 1px solid #D1D5DC;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 20;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-left svg {
+      width: 20px;
+      height: 20px;
+      fill: #374151;
+      stroke: #374151;
+      stroke-width: 1;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .search-bar {
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 300px;
+      height: 36px;
+      padding-left: 40px;
+      padding-right: 16px;
+      border-radius: 18px;
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .search-bar input::placeholder {
+      color: #9CA3AF;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: #9CA3AF;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .header-icon {
+      color: #6B7280;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .header-icon:hover {
+      color: #111827;
+    }
+
+    .header-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .header-username {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      margin-left: 240px;
+      margin-top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      background: #F2F2F2;
+    }
+
+    .content-wrapper {
+      padding: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      margin-bottom: 24px;
+    }
+
+    .page-title h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .page-title p {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+    }
+
+    .form-section {
+      margin-bottom: 32px;
+    }
+
+    .form-section:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-field label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .required {
+      color: #EF4444;
+    }
+
+    .optional {
+      font-size: 12px;
+      color: #9CA3AF;
+      font-weight: 400;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid #D1D5DC;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #111827;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3152B8;
+      box-shadow: 0 0 0 3px rgba(49, 82, 184, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #9CA3AF;
+    }
+
+    .form-select {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid #D1D5DC;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #111827;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #3152B8;
+      box-shadow: 0 0 0 3px rgba(49, 82, 184, 0.1);
+    }
+
+    .form-select:disabled {
+      background: #F3F4F6;
+      cursor: not-allowed;
+      color: #9CA3AF;
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .time-slot {
+      height: 40px;
+      border: 1px solid #D1D5DC;
+      border-radius: 6px;
+      background: white;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .time-slot:hover {
+      border-color: #3152B8;
+      color: #3152B8;
+    }
+
+    .time-slot.selected {
+      background: #3152B8;
+      border-color: #3152B8;
+      color: white;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #D1D5DC;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #111827;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      transition: all 0.2s;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #3152B8;
+      box-shadow: 0 0 0 3px rgba(49, 82, 184, 0.1);
+    }
+
+    .form-textarea::placeholder {
+      color: #9CA3AF;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid #E5E7EB;
+      margin-top: 32px;
+    }
+
+    .btn {
+      height: 40px;
+      padding: 0 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid #D1D5DC;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #F9FAFB;
+    }
+
+    .btn-primary {
+      background: #3152B8;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2742a0;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 40;
+      display: none;
+      animation: fadeIn 0.2s;
+    }
+
+    .modal-overlay.show {
+      display: block;
+    }
+
+    .modal-container {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .modal-container.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      animation: modalIn 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      color: #9CA3AF;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 4px;
+    }
+
+    .modal-close:hover {
+      color: #4B5563;
+    }
+
+    .modal-close svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: #EFF6FF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .modal-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: #3152B8;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-description {
+      font-size: 14px;
+      color: #6B7280;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-summary {
+      background: #F9FAFB;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .summary-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .summary-value {
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .summary-highlight {
+      font-weight: 600;
+      color: #3152B8;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: #E5E7EB;
+      margin: 8px 0;
+    }
+
+    .summary-full {
+      margin-bottom: 12px;
+    }
+
+    .summary-full:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-full .summary-label {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .summary-full .summary-value {
+      display: block;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      height: 44px;
+    }
+
+    /* Toast Styles */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 100;
+      display: none;
+    }
+
+    .toast-container.show {
+      display: block;
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(32px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .toast {
+      width: 520px;
+      height: 70px;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .toast.success {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+    }
+
+    .toast.error {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+    }
+
+    .toast-icon {
+      flex-shrink: 0;
+    }
+
+    .toast-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .toast.success .toast-icon svg {
+      stroke: #16A34A;
+    }
+
+    .toast.error .toast-icon svg {
+      stroke: #DC2626;
+    }
+
+    .toast-message {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toast.success .toast-message {
+      color: #166534;
+    }
+
+    .toast.error .toast-message {
+      color: #991B1B;
+    }
+
+    .toast-close {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      padding: 4px;
+    }
+
+    .toast-close:hover {
+      opacity: 0.7;
+    }
+
+    .toast-close svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .toast.success .toast-close svg {
+      stroke: #16A34A;
+    }
+
+    .toast.error .toast-close svg {
+      stroke: #DC2626;
+    }
+  </style>
+</head>
+<body>
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M13 3H11V11H3V13H11V21H13V13H21V11H13V3Z"/>
+        </svg>
+      </div>
+      <div class="logo-text">CliniCare</div>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-item">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>Trang chủ</span>
+      </button>
+
+      <button class="nav-item active">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span>Đặt lịch</span>
+      </button>
+
+      <button class="nav-item">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Lịch hẹn của tôi</span>
+      </button>
+
+      <button class="nav-item">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span>Hồ sơ bệnh nhân</span>
+      </button>
+
+      <button class="nav-item">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        <span>Khoa và bác sĩ</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Top Header -->
+  <header class="header">
+    <div class="header-left">
+      <svg viewBox="0 0 24 24">
+        <path d="M13 3H11V11H3V13H11V21H13V13H21V11H13V3Z"/>
+      </svg>
+      <h1 class="header-title">CliniCare</h1>
+    </div>
+
+    <div class="header-right">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Search doctor, specialty...">
+      </div>
+
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+      </div>
+
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+
+      <span class="header-username">Abc</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+      <!-- Page Title -->
+      <div class="page-title">
+        <h1>Đặt lịch khám</h1>
+        <p>Lên lịch khám với bác sĩ</p>
+      </div>
+
+      <!-- Form Container -->
+      <div class="form-container">
+        <form id="appointmentForm">
+          <!-- Patient Information Section -->
+          <div class="form-section">
+            <h2 class="section-title">Thông tin bệnh nhân</h2>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Họ và tên <span class="required">*</span></label>
+                <input type="text" class="form-input" name="fullName" placeholder="Nhập họ và tên đầy đủ" required>
+              </div>
+
+              <div class="form-field">
+                <label>Số điện thoại <span class="required">*</span></label>
+                <input type="tel" class="form-input" name="phoneNumber" placeholder="Nhập số điện thoại" required>
+              </div>
+
+              <div class="form-field">
+                <label>Giới tính <span class="required">*</span></label>
+                <select class="form-select" name="gender" required>
+                  <option value="">Chọn giới tính</option>
+                  <option value="male">Nam</option>
+                  <option value="female">Nữ</option>
+                  <option value="other">Khác</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label>Ngày sinh <span class="required">*</span></label>
+                <input type="date" class="form-input" name="dateOfBirth" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appointment Details Section -->
+          <div class="form-section">
+            <h2 class="section-title">Thông tin lịch khám</h2>
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Chọn khoa khám <span class="required">*</span></label>
+                  <select class="form-select" name="department" id="department" required>
+                    <option value="">Chọn khoa</option>
+                    <option value="internal-medicine">Khoa nội</option>
+                    <option value="surgery">Khoa ngoại</option>
+                    <option value="pediatrics">Khoa nhi</option>
+                    <option value="cardiology">Khoa tim mạch</option>
+                    <option value="gastroenterology">Khoa tiêu hóa</option>
+                    <option value="dermatology">Khoa da liễu</option>
+                    <option value="respiratory">Khoa hô hấp</option>
+                    <option value="ent">Khoa tai mũi họng</option>
+                    <option value="obstetrics">Khoa sản</option>
+                    <option value="dentistry">Khoa răng hàm mặt</option>
+                    <option value="neurology">Khoa thần kinh</option>
+                    <option value="urology">Khoa tiết niệu</option>
+                    <option value="andrology">Khoa nam khoa</option>
+                    <option value="oncology">Khoa ung bướu</option>
+                    <option value="orthopedics">Khoa chấn thương chỉnh hình</option>
+                    <option value="emergency">Khoa hồi sức cấp cứu</option>
+                    <option value="imaging">Khoa chẩn đoán hình ảnh</option>
+                    <option value="nutrition">Khoa dinh dưỡng</option>
+                    <option value="physical-therapy">Khoa vật lý trị liệu</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label>Chọn bác sĩ <span class="optional">(Không bắt buộc)</span></label>
+                  <select class="form-select" name="doctor" id="doctor" disabled>
+                    <option value="">Chọn bác sĩ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Chọn ngày khám <span class="required">*</span></label>
+                  <input type="date" class="form-input" name="appointmentDate" required>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Chọn giờ khám <span class="required">*</span></label>
+                <div class="time-grid">
+                  <button type="button" class="time-slot" data-time="08:00">08:00</button>
+                  <button type="button" class="time-slot" data-time="09:00">09:00</button>
+                  <button type="button" class="time-slot" data-time="10:00">10:00</button>
+                  <button type="button" class="time-slot" data-time="11:00">11:00</button>
+                  <button type="button" class="time-slot" data-time="13:00">13:00</button>
+                  <button type="button" class="time-slot" data-time="14:00">14:00</button>
+                  <button type="button" class="time-slot" data-time="15:00">15:00</button>
+                  <button type="button" class="time-slot" data-time="16:00">16:00</button>
+                  <button type="button" class="time-slot" data-time="17:00">17:00</button>
+                </div>
+                <input type="hidden" name="appointmentTime" id="appointmentTime" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reason for Visit Section -->
+          <div class="form-section">
+            <h2 class="section-title">Mô tả triệu chứng</h2>
+            <div class="form-field">
+              <textarea class="form-textarea" name="reasonForVisit" rows="4" placeholder="Nhập triệu chứng của bạn..." required></textarea>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">Hủy</button>
+            <button type="submit" class="btn btn-primary">Đặt lịch khám</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="modal-container" id="modalContainer">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="modal-body">
+        <div class="modal-icon">
+          <svg viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+
+        <h2 class="modal-title">Xác nhận đặt lịch</h2>
+        <p class="modal-description">Bạn có chắc chắn muốn đặt lịch khám với thông tin sau?</p>
+
+        <div class="modal-summary" id="modalSummary"></div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+          <button class="btn btn-primary" onclick="confirmAppointment()">Xác nhận</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer">
+    <div class="toast success">
+      <div class="toast-icon">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="toast-message" id="toastMessage">Đặt lịch hẹn thành công!</div>
+      <button class="toast-close" onclick="closeToast()">
+        <svg viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const doctors = {
+      'cardiology': [
+        { id: '1', name: 'BS. Nguyễn Văn A' },
+        { id: '2', name: 'BS. Trần Thị B' }
+      ],
+      'pediatrics': [
+        { id: '3', name: 'BS. Lê Văn C' }
+      ],
+      'internal-medicine': [
+        { id: '4', name: 'BS. Phạm Thị D' }
+      ],
+      'surgery': [
+        { id: '5', name: 'BS. Hoàng Văn E' }
+      ],
+      'dermatology': [
+        { id: '6', name: 'BS. Võ Thị F' }
+      ]
+    };
+
+    const departments = {
+      'internal-medicine': 'Khoa nội',
+      'surgery': 'Khoa ngoại',
+      'pediatrics': 'Khoa nhi',
+      'cardiology': 'Khoa tim mạch',
+      'gastroenterology': 'Khoa tiêu hóa',
+      'dermatology': 'Khoa da liễu',
+      'respiratory': 'Khoa hô hấp',
+      'ent': 'Khoa tai mũi họng',
+      'obstetrics': 'Khoa sản',
+      'dentistry': 'Khoa răng hàm mặt',
+      'neurology': 'Khoa thần kinh',
+      'urology': 'Khoa tiết niệu',
+      'andrology': 'Khoa nam khoa',
+      'oncology': 'Khoa ung bướu',
+      'orthopedics': 'Khoa chấn thương chỉnh hình',
+      'emergency': 'Khoa hồi sức cấp cứu',
+      'imaging': 'Khoa chẩn đoán hình ảnh',
+      'nutrition': 'Khoa dinh dưỡng',
+      'physical-therapy': 'Khoa vật lý trị liệu'
+    };
+
+    let formData = null;
+
+    // Handle department change to update doctor list
+    document.getElementById('department').addEventListener('change', function(e) {
+      const department = e.target.value;
+      const doctorSelect = document.getElementById('doctor');
+      
+      doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
+      
+      if (department && doctors[department]) {
+        doctorSelect.disabled = false;
+        doctors[department].forEach(doctor => {
+          const option = document.createElement('option');
+          option.value = doctor.id;
+          option.textContent = doctor.name;
+          doctorSelect.appendChild(option);
+        });
+      } else {
+        doctorSelect.disabled = true;
+      }
+    });
+
+    // Handle time slot selection
+    document.querySelectorAll('.time-slot').forEach(button => {
+      button.addEventListener('click', function() {
+        document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('appointmentTime').value = this.dataset.time;
+      });
+    });
+
+    // Handle form submission
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = e.target;
+      const data = new FormData(form);
+      
+      formData = {
+        fullName: data.get('fullName'),
+        phoneNumber: data.get('phoneNumber'),
+        gender: data.get('gender'),
+        dateOfBirth: data.get('dateOfBirth'),
+        department: data.get('department'),
+        doctor: data.get('doctor'),
+        appointmentDate: data.get('appointmentDate'),
+        appointmentTime: data.get('appointmentTime'),
+        reasonForVisit: data.get('reasonForVisit')
+      };
+      
+      showModal();
+    });
+
+    function showModal() {
+      const genderLabels = {
+        'male': 'Nam',
+        'female': 'Nữ',
+        'other': 'Khác'
+      };
+
+      const departmentLabel = departments[formData.department];
+      const doctorName = formData.doctor ? getDoctorName(formData.doctor) : null;
+      
+      const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+
+      const summaryHtml = `
+        <div class="summary-row">
+          <span class="summary-label">Họ và tên:</span>
+          <span class="summary-value">${formData.fullName}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Số điện thoại:</span>
+          <span class="summary-value">${formData.phoneNumber}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span class="summary-label">Khoa khám:</span>
+          <span class="summary-value">${departmentLabel}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Bác sĩ:</span>
+          <span class="summary-value">${doctorName || 'Không chọn'}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span class="summary-label">Ngày khám:</span>
+          <span class="summary-value summary-highlight">${formatDate(formData.appointmentDate)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Giờ khám:</span>
+          <span class="summary-value summary-highlight">${formData.appointmentTime}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-full">
+          <span class="summary-label">Lý do khám:</span>
+          <span class="summary-value">${formData.reasonForVisit}</span>
+        </div>
+      `;
+      
+      document.getElementById('modalSummary').innerHTML = summaryHtml;
+      document.getElementById('modalOverlay').classList.add('show');
+      document.getElementById('modalContainer').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.getElementById('modalContainer').classList.remove('show');
+    }
+
+    function confirmAppointment() {
+      closeModal();
+      showToast('Đặt lịch hẹn thành công!');
+      
+      setTimeout(() => {
+        resetForm();
+      }, 2000);
+    }
+
+    function showToast(message) {
+      document.getElementById('toastMessage').textContent = message;
+      document.getElementById('toastContainer').classList.add('show');
+      
+      setTimeout(closeToast, 5000);
+    }
+
+    function closeToast() {
+      document.getElementById('toastContainer').classList.remove('show');
+    }
+
+    function resetForm() {
+      document.getElementById('appointmentForm').reset();
+      document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
+      document.getElementById('doctor').disabled = true;
+      formData = null;
+    }
+
+    function getDoctorName(doctorId) {
+      for (const dept in doctors) {
+        const doctor = doctors[dept].find(d => d.id === doctorId);
+        if (doctor) return doctor.name;
+      }
+      return null;
+    }
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="appointmentDate"]').setAttribute('min', today);
+  </script>
+</body>
+</html>

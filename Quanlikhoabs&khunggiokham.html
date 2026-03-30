@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f2f2f2;
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(180deg, #4F73F6 0%, #3050AD 100%);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4F73F6;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .menu-button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 6px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            padding: 14px 10px 0;
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px;
+            height: 38px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            font-weight: 500;
+        }
+
+        .nav-spacer {
+            flex: 1;
+        }
+
+        .sidebar-footer {
+            padding: 0 10px 16px;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.12);
+            margin-bottom: 12px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            height: 56px;
+            border-bottom: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 220px;
+            right: 0;
+            z-index: 90;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-logo-text {
+            color: black;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            width: 285px;
+            height: 32px;
+            padding-left: 36px;
+            padding-right: 12px;
+            background: #efeded;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #374151;
+        }
+
+        .icon-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: black;
+        }
+
+        .user-name {
+            color: black;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 56px;
+            width: calc(100vw - 220px);
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .content-area {
+            background: #f2f2f2;
+            padding: 24px;
+            min-height: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .btn-primary {
+            padding: 8px 16px;
+            background: #3152b8;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2a47a0;
+        }
+
+        .btn-secondary {
+            padding: 8px 16px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            height: 36px;
+            padding: 0 16px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .breadcrumb span {
+            cursor: pointer;
+        }
+
+        .breadcrumb span:hover {
+            color: #3152b8;
+        }
+
+        .breadcrumb span:last-child {
+            color: #374151;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab:hover {
+            color: #374151;
+        }
+
+        .tab.active {
+            color: #3152b8;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3152b8;
+        }
+
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .stat-value.green {
+            color: #16a34a;
+        }
+
+        .stat-value.red {
+            color: #dc2626;
+        }
+
+        .stat-value.orange {
+            color: #ea580c;
+        }
+
+        .stat-value.blue {
+            color: #2563eb;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 16px;
+        }
+
+        .toolbar-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .toolbar-search {
+            width: 100%;
+            height: 36px;
+            padding-left: 36px;
+            padding-right: 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .toolbar-search:focus {
+            outline: none;
+            border-color: #3152b8;
+            box-shadow: 0 0 0 3px rgba(49, 82, 184, 0.1);
+        }
+
+        select {
+            height: 36px;
+            padding: 0 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        input[type="date"], input[type="text"], input[type="email"], input[type="tel"] {
+            height: 36px;
+            padding: 0 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .flex-spacer {
+            flex: 1;
+        }
+
+        /* Table */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        th.center, td.center {
+            text-align: center;
+        }
+
+        td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1f2937;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3152b8, #5576dd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+
+        .status-badge.inactive {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-badge.locked {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        .status-badge.pending {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .action-btn.view {
+            color: #2563eb;
+        }
+
+        .action-btn.view:hover {
+            background: #eff6ff;
+        }
+
+        .action-btn.edit {
+            color: #16a34a;
+        }
+
+        .action-btn.edit:hover {
+            background: #f0fdf4;
+        }
+
+        .action-btn.calendar {
+            color: #9333ea;
+        }
+
+        .action-btn.calendar:hover {
+            background: #faf5ff;
+        }
+
+        .action-btn.delete {
+            color: #dc2626;
+        }
+
+        .action-btn.delete:hover {
+            background: #fef2f2;
+        }
+
+        /* Pagination */
+        .pagination {
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 4px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-number {
+            padding: 4px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .page-number.active {
+            background: #3152b8;
+            color: white;
+            border-color: #3152b8;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            height: 40px;
+            padding: 0 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea.form-input {
+            height: 100px;
+            padding: 12px;
+            resize: vertical;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid #16a34a;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc2626;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        /* Detail View */
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        /* Floating Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            width: 42px;
+            height: 40px;
+            background: #3152b8;
+            border: none;
+            border-radius: 7px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 1000;
+        }
+
+        .chat-button:hover {
+            background: #2a47a0;
+        }
+
+        .chat-tail {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-top: 6px solid #3152b8;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">+</div>
+                    <span class="logo-text">CliniCare</span>
+                </div>
+                <button class="menu-button">☰</button>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item" onclick="showScreen('home')">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Trang chủ
+                </button>
+                <button class="nav-item" onclick="showScreen('appointment-slots')">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Quản lý lịch hẹn
+                </button>
+                <button class="nav-item active" id="nav-departments" onclick="showScreen('departments')">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Quản lý khoa và bác sĩ
+                </button>
+                <button class="nav-item">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Quản lý chat bot
+                </button>
+                <button class="nav-item">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Cài đặt
+                </button>
+            </nav>
+
+            <div class="nav-spacer"></div>
+
+            <div class="sidebar-footer">
+                <div class="divider"></div>
+                <button class="nav-item">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Đăng xuất
+                </button>
+            </div>
+        </aside>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-icon" style="background: black; color: white; font-size: 24px;">+</div>
+                <span class="header-logo-text">CliniCare</span>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm bác sĩ, chuyên khoa...">
+                </div>
+                <button class="icon-button">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </button>
+                <button class="icon-button">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <span class="user-name">Abc</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- SCREEN 1: QUẢN LÝ KHOA -->
+            <div id="screen-departments" class="content-area">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Quản lý khoa</h1>
+                        <button class="btn-primary" onclick="showScreen('add-department')">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Thêm khoa
+                        </button>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Quản lý khoa và bác sĩ</span>
+                        <span>/</span>
+                        <span>Danh sách khoa</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng số khoa</div>
+                        <div class="stat-value" id="total-departments">19</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Đang hoạt động</div>
+                        <div class="stat-value green" id="active-departments">17</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tạm ngưng</div>
+                        <div class="stat-value orange" id="inactive-departments">2</div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-content">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <input type="text" class="toolbar-search" id="dept-search" placeholder="Tìm tên khoa...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã khoa</th>
+                                <th>Tên khoa</th>
+                                <th>Số bác sĩ</th>
+                                <th>Trưởng khoa</th>
+                                <th>Số điện thoại</th>
+                                <th>Trạng thái</th>
+                                <th class="center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="departments-table-body"></tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Hiển thị <span style="font-weight: 500;">1–10</span> trên <span style="font-weight: 500;" id="dept-total">19</span> khoa
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn" disabled>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <button class="page-number active">1</button>
+                            <button class="page-number">2</button>
+                            <button class="page-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: EDIT DEPARTMENT -->
+            <div id="screen-edit-department" class="content-area hidden">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Chỉnh sửa khoa</h1>
+                        <div class="button-group">
+                            <button class="btn-secondary" onclick="showScreen('departments')">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                                Quay lại
+                            </button>
+                            <button class="btn-primary" onclick="saveDepartment()">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Quản lý khoa và bác sĩ</span>
+                        <span>/</span>
+                        <span onclick="showScreen('departments')">Danh sách khoa</span>
+                        <span>/</span>
+                        <span>Chỉnh sửa</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-section">
+                        <div class="detail-title">Thông tin khoa</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Mã khoa</label>
+                                <input type="text" class="form-input" id="edit-dept-code" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tên khoa</label>
+                                <input type="text" class="form-input" id="edit-dept-name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Trưởng khoa</label>
+                                <input type="text" class="form-input" id="edit-dept-head">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-input" id="edit-dept-phone">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="edit-dept-email">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-input" id="edit-dept-status">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="inactive">Tạm ngưng</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">Mô tả</label>
+                                <textarea class="form-input" id="edit-dept-description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: DANH SÁCH BÁC SĨ -->
+            <div id="screen-doctors" class="content-area hidden">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Quản lý bác sĩ</h1>
+                        <button class="btn-primary" onclick="showScreen('add-doctor')">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Thêm bác sĩ
+                        </button>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Trang chủ</span>
+                        <span>/</span>
+                        <span>Danh sách bác sĩ</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng bác sĩ</div>
+                        <div class="stat-value" id="total-doctors">87</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Đang hoạt động</div>
+                        <div class="stat-value green" id="active-doctors">73</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tạm khóa</div>
+                        <div class="stat-value red" id="locked-doctors">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Chờ duyệt lịch</div>
+                        <div class="stat-value blue" id="pending-doctors">6</div>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('doctors')">Danh sách bác sĩ</button>
+                        <button class="tab" onclick="switchTab('timeslots')">Khung giờ khám</button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-content">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <input type="text" class="toolbar-search" id="doctor-search" placeholder="Tìm tên bác sĩ, mã bác sĩ, số điện thoại...">
+                        </div>
+                        <select id="doctor-dept-filter">
+                            <option value="">Tất cả khoa</option>
+                        </select>
+                        <select id="doctor-specialty-filter">
+                            <option value="">Tất cả chuyên môn</option>
+                        </select>
+                        <select id="doctor-status-filter">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="locked">Tạm khóa</option>
+                            <option value="pending">Chờ duyệt lịch</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Ảnh</th>
+                                <th>Mã bác sĩ</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Khoa</th>
+                                <th>Chuyên môn</th>
+                                <th>Số điện thoại</th>
+                                <th>Email</th>
+                                <th>Lịch làm việc</th>
+                                <th>Trạng thái</th>
+                                <th class="center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctors-table-body"></tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Hiển thị <span style="font-weight: 500;">1–10</span> trên <span style="font-weight: 500;" id="doctors-total">87</span> bác sĩ
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn" disabled>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <button class="page-number active">1</button>
+                            <button class="page-number">2</button>
+                            <button class="page-number">3</button>
+                            <button class="page-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: DOCTOR DETAIL -->
+            <div id="screen-doctor-detail" class="content-area hidden">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title" id="doctor-detail-name">Chi tiết bác sĩ</h1>
+                        <button class="btn-secondary" onclick="showScreen('doctors')">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Quay lại
+                        </button>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Trang chủ</span>
+                        <span>/</span>
+                        <span onclick="showScreen('doctors')">Danh sách bác sĩ</span>
+                        <span>/</span>
+                        <span>Chi tiết</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-section">
+                        <div class="detail-title">Thông tin cá nhân</div>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Mã bác sĩ</div>
+                                <div class="detail-value" id="detail-code"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Họ và tên</div>
+                                <div class="detail-value" id="detail-name"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Giới tính</div>
+                                <div class="detail-value" id="detail-gender"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ngày sinh</div>
+                                <div class="detail-value" id="detail-dob"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Số điện thoại</div>
+                                <div class="detail-value" id="detail-phone"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value" id="detail-email"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-title">Thông tin công việc</div>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Khoa</div>
+                                <div class="detail-value" id="detail-department"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Chuyên môn</div>
+                                <div class="detail-value" id="detail-specialty"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Lịch làm việc</div>
+                                <div class="detail-value" id="detail-schedule"></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Trạng thái</div>
+                                <div class="detail-value" id="detail-status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 5: EDIT DOCTOR -->
+            <div id="screen-edit-doctor" class="content-area hidden">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Chỉnh sửa bác sĩ</h1>
+                        <div class="button-group">
+                            <button class="btn-secondary" onclick="showScreen('doctors')">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                                Quay lại
+                            </button>
+                            <button class="btn-primary" onclick="saveDoctor()">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Trang chủ</span>
+                        <span>/</span>
+                        <span onclick="showScreen('doctors')">Danh sách bác sĩ</span>
+                        <span>/</span>
+                        <span>Chỉnh sửa</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-section">
+                        <div class="detail-title">Thông tin bác sĩ</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Mã bác sĩ</label>
+                                <input type="text" class="form-input" id="edit-doctor-code" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-input" id="edit-doctor-name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Giới tính</label>
+                                <select class="form-input" id="edit-doctor-gender">
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ngày sinh</label>
+                                <input type="date" class="form-input" id="edit-doctor-dob">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-input" id="edit-doctor-phone">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="edit-doctor-email">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Khoa</label>
+                                <select class="form-input" id="edit-doctor-department"></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Chuyên môn</label>
+                                <input type="text" class="form-input" id="edit-doctor-specialty">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Lịch làm việc</label>
+                                <input type="text" class="form-input" id="edit-doctor-schedule">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-input" id="edit-doctor-status">
+                                    <option value="active">Đang hoạt động</option>
+                                    <option value="locked">Tạm khóa</option>
+                                    <option value="pending">Chờ duyệt lịch</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 6: KHUNG GIỜ KHÁM -->
+            <div id="screen-timeslots" class="content-area hidden">
+                <div class="page-header">
+                    <div class="page-title-row">
+                        <h1 class="page-title">Khung giờ khám bác sĩ</h1>
+                    </div>
+                    <div class="breadcrumb">
+                        <span onclick="showScreen('departments')">Quản lý khoa và bác sĩ</span>
+                        <span>/</span>
+                        <span>Khung giờ khám</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng bác sĩ</div>
+                        <div class="stat-value">87</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Đang hoạt động</div>
+                        <div class="stat-value green">73</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tạm khóa</div>
+                        <div class="stat-value red">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Chờ duyệt lịch</div>
+                        <div class="stat-value blue">6</div>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab" onclick="switchTab('doctors')">Danh sách bác sĩ</button>
+                        <button class="tab active" onclick="switchTab('timeslots')">Khung giờ khám</button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-content">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <input type="text" class="toolbar-search" id="timeslot-search" placeholder="Tìm bác sĩ, khoa, khung giờ...">
+                        </div>
+                        <select id="timeslot-dept-filter">
+                            <option value="">Tất cả khoa</option>
+                        </select>
+                        <select id="timeslot-doctor-filter">
+                            <option value="">Tất cả bác sĩ</option>
+                        </select>
+                        <input type="date" id="timeslot-date-filter">
+                        <div class="flex-spacer"></div>
+                        <button class="btn-primary">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Thêm khung giờ
+                        </button>
+                        <button class="btn-success">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Bác sĩ</th>
+                                <th>Khoa</th>
+                                <th>Khung giờ</th>
+                                <th class="center">Số BN tối đa</th>
+                                <th>Trạng thái</th>
+                                <th class="center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timeslots-table-body"></tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Hiển thị <span style="font-weight: 500;">1–8</span> trên <span style="font-weight: 500;">8</span> khung giờ
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn" disabled>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <button class="page-number active">1</button>
+                            <button class="page-btn" disabled>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Chat Button -->
+        <button class="chat-button">
+            <svg width="22" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 22 20">
+                <path d="M2 2C2 1.44772 2.44772 1 3 1H19C19.5523 1 20 1.44772 20 2V13C20 13.5523 19.5523 14 19 14H6L2 18V2Z"/>
+            </svg>
+            <div class="chat-tail"></div>
+        </button>
+    </div>
+
+    <script>
+        // Mock Data
+        let departments = [
+            {id: 1, code: 'TM', name: 'Tim mạch', doctorCount: 8, head: 'BS. Nguyễn Văn An', phone: '0123456789', email: 'timmach@clinicare.vn', status: 'active', description: 'Khoa Tim mạch chuyên điều trị các bệnh về tim'},
+            {id: 2, code: 'NHI', name: 'Nhi', doctorCount: 6, head: 'BS. Trần Thị Bình', phone: '0123456790', email: 'nhi@clinicare.vn', status: 'active', description: 'Khoa Nhi chuyên khám và điều trị cho trẻ em'},
+            {id: 3, code: 'TK', name: 'Thần kinh', doctorCount: 5, head: 'BS. Lê Văn Cường', phone: '0123456791', email: 'thankinh@clinicare.vn', status: 'active', description: 'Khoa Thần kinh điều trị các bệnh lý thần kinh'},
+            {id: 4, code: 'DL', name: 'Da liễu', doctorCount: 4, head: 'BS. Phạm Thị Dung', phone: '0123456792', email: 'dalieu@clinicare.vn', status: 'active', description: 'Khoa Da liễu điều trị các bệnh về da'},
+            {id: 5, code: 'TMH', name: 'Tai - Mũi - Họng', doctorCount: 5, head: 'BS. Hoàng Văn Em', phone: '0123456793', email: 'tmh@clinicare.vn', status: 'inactive', description: 'Khoa Tai Mũi Họng'},
+        ];
+
+        let doctors = [
+            {id: 1, code: 'BS001', name: 'BS. Nguyễn Văn An', gender: 'male', dob: '1980-05-15', department: 'Khoa Tim mạch', specialty: 'Tim mạch', phone: '0123456789', email: 'an.nguyen@clinicare.vn', schedule: 'T2-T6, 8h-17h', status: 'active'},
+            {id: 2, code: 'BS002', name: 'BS. Trần Thị Bình', gender: 'female', dob: '1985-08-20', department: 'Khoa Nhi', specialty: 'Nhi khoa', phone: '0123456790', email: 'binh.tran@clinicare.vn', schedule: 'T2-T6, 8h-17h', status: 'active'},
+            {id: 3, code: 'BS003', name: 'BS. Lê Văn Cường', gender: 'male', dob: '1978-12-10', department: 'Khoa Thần kinh', specialty: 'Thần kinh', phone: '0123456791', email: 'cuong.le@clinicare.vn', schedule: 'T2-T6, 8h-17h', status: 'locked'},
+            {id: 4, code: 'BS004', name: 'BS. Phạm Thị Dung', gender: 'female', dob: '1982-03-25', department: 'Khoa Da liễu', specialty: 'Da liễu', phone: '0123456792', email: 'dung.pham@clinicare.vn', schedule: 'T2-T6, 8h-17h', status: 'active'},
+            {id: 5, code: 'BS005', name: 'BS. Hoàng Văn Em', gender: 'male', dob: '1975-11-30', department: 'Khoa Tai - Mũi - Họng', specialty: 'Tai Mũi Họng', phone: '0123456793', email: 'em.hoang@clinicare.vn', schedule: 'T2-T6, 8h-17h', status: 'pending'},
+        ];
+
+        let timeslots = [
+            {id: 1, doctorName: 'BS. Nguyễn Văn An', department: 'Khoa Tim mạch', timeSlot: '08:00 - 09:00', maxPatients: 10, status: 'active'},
+            {id: 2, doctorName: 'BS. Nguyễn Văn An', department: 'Khoa Tim mạch', timeSlot: '09:00 - 10:00', maxPatients: 10, status: 'active'},
+            {id: 3, doctorName: 'BS. Trần Thị Bình', department: 'Khoa Nhi', timeSlot: '08:00 - 09:00', maxPatients: 15, status: 'active'},
+            {id: 4, doctorName: 'BS. Lê Văn Cường', department: 'Khoa Thần kinh', timeSlot: '14:00 - 15:00', maxPatients: 8, status: 'active'},
+            {id: 5, doctorName: 'BS. Phạm Thị Dung', department: 'Khoa Da liễu', timeSlot: '08:30 - 09:30', maxPatients: 12, status: 'active'},
+            {id: 6, doctorName: 'BS. Hoàng Văn Em', department: 'Khoa Tai - Mũi - Họng', timeSlot: '10:00 - 11:00', maxPatients: 10, status: 'inactive'},
+        ];
+
+        let currentEditDept = null;
+        let currentEditDoctor = null;
+        let currentViewDoctor = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDepartments();
+            renderDoctors();
+            renderTimeslots();
+            populateFilters();
+        });
+
+        // Screen Navigation
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.content-area').forEach(el => el.classList.add('hidden'));
+            
+            // Update nav active state
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Show requested screen
+            switch(screenName) {
+                case 'departments':
+                    document.getElementById('screen-departments').classList.remove('hidden');
+                    document.getElementById('nav-departments').classList.add('active');
+                    break;
+                case 'doctors':
+                    document.getElementById('screen-doctors').classList.remove('hidden');
+                    document.getElementById('nav-departments').classList.add('active');
+                    break;
+                case 'timeslots':
+                    document.getElementById('screen-timeslots').classList.remove('hidden');
+                    document.getElementById('nav-departments').classList.add('active');
+                    break;
+                case 'edit-department':
+                    document.getElementById('screen-edit-department').classList.remove('hidden');
+                    break;
+                case 'doctor-detail':
+                    document.getElementById('screen-doctor-detail').classList.remove('hidden');
+                    break;
+                case 'edit-doctor':
+                    document.getElementById('screen-edit-doctor').classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            if (tab === 'doctors') {
+                showScreen('doctors');
+            } else if (tab === 'timeslots') {
+                showScreen('timeslots');
+            }
+        }
+
+        // Render Departments
+        function renderDepartments() {
+            const tbody = document.getElementById('departments-table-body');
+            tbody.innerHTML = '';
+            
+            departments.forEach((dept, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td style="font-weight: 500;">${dept.code}</td>
+                        <td style="font-weight: 500;">${dept.name}</td>
+                        <td>${dept.doctorCount}</td>
+                        <td>${dept.head}</td>
+                        <td>${dept.phone}</td>
+                        <td><span class="status-badge ${dept.status}">${dept.status === 'active' ? 'Hoạt động' : 'Tạm ngưng'}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewDepartment(${dept.id})" title="Xem">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button class="action-btn edit" onclick="editDepartment(${dept.id})" title="Chỉnh sửa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteDepartment(${dept.id})" title="Xóa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Department Actions
+        function viewDepartment(id) {
+            // Navigate to doctors list filtered by department
+            showScreen('doctors');
+            showToast('Hiển thị danh sách bác sĩ của khoa', 'success');
+        }
+
+        function editDepartment(id) {
+            currentEditDept = departments.find(d => d.id === id);
+            if (!currentEditDept) return;
+            
+            document.getElementById('edit-dept-code').value = currentEditDept.code;
+            document.getElementById('edit-dept-name').value = currentEditDept.name;
+            document.getElementById('edit-dept-head').value = currentEditDept.head;
+            document.getElementById('edit-dept-phone').value = currentEditDept.phone;
+            document.getElementById('edit-dept-email').value = currentEditDept.email;
+            document.getElementById('edit-dept-status').value = currentEditDept.status;
+            document.getElementById('edit-dept-description').value = currentEditDept.description || '';
+            
+            showScreen('edit-department');
+        }
+
+        function saveDepartment() {
+            if (!currentEditDept) return;
+            
+            currentEditDept.name = document.getElementById('edit-dept-name').value;
+            currentEditDept.head = document.getElementById('edit-dept-head').value;
+            currentEditDept.phone = document.getElementById('edit-dept-phone').value;
+            currentEditDept.email = document.getElementById('edit-dept-email').value;
+            currentEditDept.status = document.getElementById('edit-dept-status').value;
+            currentEditDept.description = document.getElementById('edit-dept-description').value;
+            
+            renderDepartments();
+            showScreen('departments');
+            showToast('Cập nhật khoa thành công', 'success');
+        }
+
+        function deleteDepartment(id) {
+            const dept = departments.find(d => d.id === id);
+            if (dept.doctorCount > 0) {
+                showToast('Không thể xóa khoa vì vẫn còn bác sĩ thuộc khoa', 'error');
+            } else {
+                departments = departments.filter(d => d.id !== id);
+                renderDepartments();
+                showToast('Xóa khoa thành công', 'success');
+            }
+        }
+
+        // Render Doctors
+        function renderDoctors() {
+            const tbody = document.getElementById('doctors-table-body');
+            tbody.innerHTML = '';
+            
+            doctors.slice(0, 10).forEach((doctor, index) => {
+                const initials = doctor.name.split(' ').slice(-2).map(n => n[0]).join('');
+                const genderText = doctor.gender === 'male' ? 'Nam' : 'Nữ';
+                let statusBadge = '';
+                if (doctor.status === 'active') {
+                    statusBadge = '<span class="status-badge active">Đang hoạt động</span>';
+                } else if (doctor.status === 'locked') {
+                    statusBadge = '<span class="status-badge locked">Tạm khóa</span>';
+                } else if (doctor.status === 'pending') {
+                    statusBadge = '<span class="status-badge pending">Chờ duyệt lịch</span>';
+                }
+                
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><div class="avatar">${initials}</div></td>
+                        <td style="font-weight: 500;">${doctor.code}</td>
+                        <td style="font-weight: 500;">${doctor.name}</td>
+                        <td>${genderText}</td>
+                        <td>${doctor.department}</td>
+                        <td>${doctor.specialty}</td>
+                        <td>${doctor.phone}</td>
+                        <td>${doctor.email}</td>
+                        <td>${doctor.schedule}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewDoctor(${doctor.id})" title="Xem chi tiết">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button class="action-btn edit" onclick="editDoctor(${doctor.id})" title="Chỉnh sửa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button class="action-btn calendar" title="Quản lý lịch làm việc">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteDoctor(${doctor.id})" title="Xóa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Doctor Actions
+        function viewDoctor(id) {
+            currentViewDoctor = doctors.find(d => d.id === id);
+            if (!currentViewDoctor) return;
+            
+            document.getElementById('doctor-detail-name').textContent = currentViewDoctor.name;
+            document.getElementById('detail-code').textContent = currentViewDoctor.code;
+            document.getElementById('detail-name').textContent = currentViewDoctor.name;
+            document.getElementById('detail-gender').textContent = currentViewDoctor.gender === 'male' ? 'Nam' : 'Nữ';
+            document.getElementById('detail-dob').textContent = currentViewDoctor.dob;
+            document.getElementById('detail-phone').textContent = currentViewDoctor.phone;
+            document.getElementById('detail-email').textContent = currentViewDoctor.email;
+            document.getElementById('detail-department').textContent = currentViewDoctor.department;
+            document.getElementById('detail-specialty').textContent = currentViewDoctor.specialty;
+            document.getElementById('detail-schedule').textContent = currentViewDoctor.schedule;
+            
+            let statusText = '';
+            if (currentViewDoctor.status === 'active') statusText = 'Đang hoạt động';
+            else if (currentViewDoctor.status === 'locked') statusText = 'Tạm khóa';
+            else if (currentViewDoctor.status === 'pending') statusText = 'Chờ duyệt lịch';
+            document.getElementById('detail-status').textContent = statusText;
+            
+            showScreen('doctor-detail');
+        }
+
+        function editDoctor(id) {
+            currentEditDoctor = doctors.find(d => d.id === id);
+            if (!currentEditDoctor) return;
+            
+            document.getElementById('edit-doctor-code').value = currentEditDoctor.code;
+            document.getElementById('edit-doctor-name').value = currentEditDoctor.name;
+            document.getElementById('edit-doctor-gender').value = currentEditDoctor.gender;
+            document.getElementById('edit-doctor-dob').value = currentEditDoctor.dob;
+            document.getElementById('edit-doctor-phone').value = currentEditDoctor.phone;
+            document.getElementById('edit-doctor-email').value = currentEditDoctor.email;
+            document.getElementById('edit-doctor-department').value = currentEditDoctor.department;
+            document.getElementById('edit-doctor-specialty').value = currentEditDoctor.specialty;
+            document.getElementById('edit-doctor-schedule').value = currentEditDoctor.schedule;
+            document.getElementById('edit-doctor-status').value = currentEditDoctor.status;
+            
+            showScreen('edit-doctor');
+        }
+
+        function saveDoctor() {
+            if (!currentEditDoctor) return;
+            
+            currentEditDoctor.name = document.getElementById('edit-doctor-name').value;
+            currentEditDoctor.gender = document.getElementById('edit-doctor-gender').value;
+            currentEditDoctor.dob = document.getElementById('edit-doctor-dob').value;
+            currentEditDoctor.phone = document.getElementById('edit-doctor-phone').value;
+            currentEditDoctor.email = document.getElementById('edit-doctor-email').value;
+            currentEditDoctor.department = document.getElementById('edit-doctor-department').value;
+            currentEditDoctor.specialty = document.getElementById('edit-doctor-specialty').value;
+            currentEditDoctor.schedule = document.getElementById('edit-doctor-schedule').value;
+            currentEditDoctor.status = document.getElementById('edit-doctor-status').value;
+            
+            renderDoctors();
+            showScreen('doctors');
+            showToast('Cập nhật bác sĩ thành công', 'success');
+        }
+
+        function deleteDoctor(id) {
+            doctors = doctors.filter(d => d.id !== id);
+            renderDoctors();
+            showToast('Xóa bác sĩ thành công', 'success');
+        }
+
+        // Render Timeslots
+        function renderTimeslots() {
+            const tbody = document.getElementById('timeslots-table-body');
+            tbody.innerHTML = '';
+            
+            timeslots.forEach((slot, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td style="font-weight: 500;">${slot.doctorName}</td>
+                        <td>${slot.department}</td>
+                        <td style="font-weight: 500;">${slot.timeSlot}</td>
+                        <td class="center">${slot.maxPatients}</td>
+                        <td><span class="status-badge ${slot.status}">${slot.status === 'active' ? 'Hoạt động' : 'Tạm ngưng'}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" title="Xem chi tiết">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button class="action-btn edit" title="Chỉnh sửa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteTimeslot(${slot.id})" title="Xóa">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function deleteTimeslot(id) {
+            timeslots = timeslots.filter(t => t.id !== id);
+            renderTimeslots();
+            showToast('Xóa khung giờ thành công', 'success');
+        }
+
+        // Populate Filters
+        function populateFilters() {
+            // Department filters
+            const deptSelect = document.getElementById('doctor-dept-filter');
+            const timeslotDeptSelect = document.getElementById('timeslot-dept-filter');
+            const editDoctorDept = document.getElementById('edit-doctor-department');
+            
+            departments.forEach(dept => {
+                const option = `<option value="Khoa ${dept.name}">Khoa ${dept.name}</option>`;
+                if (deptSelect) deptSelect.innerHTML += option;
+                if (timeslotDeptSelect) timeslotDeptSelect.innerHTML += option;
+                if (editDoctorDept) editDoctorDept.innerHTML += option;
+            });
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const iconSvg = type === 'success' 
+                ? '<svg class="toast-icon" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+                : '<svg class="toast-icon" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+            
+            toast.innerHTML = `
+                ${iconSvg}
+                <div class="toast-message">${message}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('dept-search')?.addEventListener('input', function(e) {
+                // Filter departments table
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#departments-table-body tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+            
+            document.getElementById('doctor-search')?.addEventListener('input', function(e) {
+                // Filter doctors table
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#doctors-table-body tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+            
+            document.getElementById('timeslot-search')?.addEventListener('input', function(e) {
+                // Filter timeslots table
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#timeslots-table-body tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

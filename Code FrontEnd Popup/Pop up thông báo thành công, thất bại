@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Toast Notifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            padding: 20px;
+        }
+
+        /* Demo Page */
+        .demo-container {
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .demo-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #111827;
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .demo-btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .demo-btn-success:hover {
+            background-color: #059669;
+        }
+
+        .demo-btn-error {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .demo-btn-error:hover {
+            background-color: #dc2626;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        /* Toast */
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            animation: slideIn 0.3s ease-out;
+            min-width: 350px;
+        }
+
+        .toast.hiding {
+            animation: slideOut 0.3s ease-out;
+        }
+
+        /* Toast Success */
+        .toast-success {
+            background-color: #d1fae5;
+            border: 1px solid #6ee7b7;
+        }
+
+        .toast-success .toast-icon {
+            color: #059669;
+        }
+
+        .toast-success .toast-message {
+            color: #065f46;
+        }
+
+        .toast-success .toast-close {
+            color: #059669;
+        }
+
+        /* Toast Error */
+        .toast-error {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+        }
+
+        .toast-error .toast-icon {
+            color: #dc2626;
+        }
+
+        .toast-error .toast-message {
+            color: #991b1b;
+        }
+
+        .toast-error .toast-close {
+            color: #dc2626;
+        }
+
+        /* Toast Icon */
+        .toast-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Toast Message */
+        .toast-message {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Toast Close Button */
+        .toast-close {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .toast-close:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .toast {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Container -->
+    <div class="demo-container">
+        <h1 class="demo-title">Toast Notifications Demo</h1>
+        <div class="demo-buttons">
+            <button class="demo-btn demo-btn-success" onclick="showSuccessToast()">
+                Hiển thị thông báo thành công
+            </button>
+            <button class="demo-btn demo-btn-error" onclick="showErrorToast()">
+                Hiển thị thông báo thất bại
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Show Success Toast
+        function showSuccessToast() {
+            showToast('Đổi mật khẩu thành công!', 'success');
+        }
+
+        // Show Error Toast
+        function showErrorToast() {
+            showToast('Đổi mật khẩu thất bại!', 'error');
+        }
+
+        // Generic Toast Function
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            // Icon
+            const icon = document.createElement('div');
+            icon.className = 'toast-icon';
+            
+            if (type === 'success') {
+                icon.innerHTML = `
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                `;
+            } else {
+                icon.innerHTML = `
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                `;
+            }
+            
+            // Message
+            const messageEl = document.createElement('div');
+            messageEl.className = 'toast-message';
+            messageEl.textContent = message;
+            
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.innerHTML = `
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            `;
+            closeBtn.onclick = () => removeToast(toast);
+            
+            // Append elements
+            toast.appendChild(icon);
+            toast.appendChild(messageEl);
+            toast.appendChild(closeBtn);
+            
+            // Add to container
+            container.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                removeToast(toast);
+            }, 5000);
+        }
+
+        // Remove Toast
+        function removeToast(toast) {
+            toast.classList.add('hiding');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+
+        // Demo: Show both toasts on load
+        window.addEventListener('load', () => {
+            setTimeout(() => showSuccessToast(), 500);
+            setTimeout(() => showErrorToast(), 1000);
+        });
+    </script>
+</body>
+</html>

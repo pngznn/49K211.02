@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CliniCare Dashboard Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f5f9;
+      color: #1f2937;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 210px;
+      background: linear-gradient(180deg, #375dcb 0%, #2d4fb1 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 10px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: white;
+      color: #375dcb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .menu a {
+      display: block;
+      padding: 12px 10px;
+      text-decoration: none;
+      color: #dbe5ff;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+    }
+
+    .logout {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 18px;
+    }
+
+    .logout a {
+      display: block;
+      text-decoration: none;
+      color: #dbe5ff;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+
+    .logout a:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 56px;
+      background: #ffffff;
+      border-bottom: 1px solid #d9dee8;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 22px;
+      padding: 0 26px;
+    }
+
+    .search-box {
+      width: 290px;
+      height: 34px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .search-box svg {
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .user-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding: 22px 34px 30px;
+    }
+
+    .hero {
+      text-align: center;
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: #6b7280;
+    }
+
+    .add-btn {
+      position: absolute;
+      right: 0;
+      top: 20px;
+      background: #375dcb;
+      border: none;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(55, 93, 203, 0.25);
+    }
+
+    .add-btn:hover {
+      background: #2e52c2;
+    }
+
+    .cards {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e6ebf2;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+      padding: 26px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      color: #111827;
+      margin-bottom: 18px;
+    }
+
+    .appointment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .appointment-item {
+      border: 1px solid #edf0f5;
+      border-radius: 14px;
+      padding: 22px 18px;
+      font-size: 17px;
+      color: #1f2937;
+      background: #fff;
+    }
+
+    .empty-box {
+      min-height: 170px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #7b8495;
+      font-size: 18px;
+    }
+
+    .chat-widget {
+      position: fixed;
+      right: 24px;
+      bottom: 0;
+      width: 500px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 30px 30px 0 0;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      height: 58px;
+      background: #f3f3f3;
+      border-bottom: 1px solid #d9dde5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .chat-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .chat-brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: #375dcb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .chat-user {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .chat-body {
+      padding: 12px 14px 0;
+      background: white;
+    }
+
+    .chat-inner {
+      border: 5px solid #2d86dc;
+      border-bottom-width: 4px;
+      border-radius: 22px;
+      min-height: 430px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-right: 2px;
+      margin-bottom: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 82%;
+      border-radius: 18px;
+      padding: 16px 18px 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .message.bot {
+      background: #d6d9df;
+      color: #333;
+      align-self: flex-start;
+    }
+
+    .message.user {
+      background: #3754bf;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .message-time {
+      margin-top: 8px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .chat-input-area {
+      border-top: 1px solid #d9dde5;
+      padding-top: 16px;
+    }
+
+    .chat-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 34px;
+      border: 1px solid #cfd5df;
+      border-radius: 11px;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-input::placeholder {
+      color: #9aa1ac;
+    }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 10px;
+      background: #d1d5db;
+      color: #111827;
+      cursor: pointer;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      background: #c3c9d2;
+    }
+
+    .chat-note {
+      text-align: center;
+      font-size: 11px;
+      color: #8a909b;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1200px) {
+      .chat-widget {
+        width: 430px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        display: none;
+      }
+
+      .chat-widget {
+        position: static;
+        width: calc(100% - 40px);
+        margin: 20px auto 0;
+        border-radius: 24px;
+      }
+
+      .hero {
+        text-align: left;
+      }
+
+      .add-btn {
+        position: static;
+        margin-top: 16px;
+      }
+
+      .cards {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="logo">
+          <div class="logo-icon">+</div>
+          <div class="logo-text">CliniCare</div>
+        </div>
+
+        <ul class="menu">
+          <li><a href="#" class="active">Trang chủ</a></li>
+          <li><a href="#">Quản lý lịch hẹn</a></li>
+          <li><a href="#">Quản lý khoa và bác sĩ</a></li>
+          <li><a href="#">Quản lý chat bot</a></li>
+          <li><a href="#">Cài đặt</a></li>
+        </ul>
+      </div>
+
+      <div class="logout">
+        <a href="#">Đăng xuất</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="#6b7280" stroke-width="2"/>
+            <line x1="20" y1="20" x2="16.5" y2="16.5" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="text" placeholder="Tìm kiếm bác sĩ, chuyên khoa..." />
+        </div>
+        <div class="user-name">Nguyễn Gia Huy</div>
+      </div>
+
+      <div class="content">
+        <div class="hero">
+          <h1>Xin chào, Abc</h1>
+          <p>Tổng quan sức khỏe của bạn</p>
+
+          <button class="add-btn">
+            <span style="font-size: 20px;">+</span>
+            <span>Thêm lịch hẹn</span>
+          </button>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <h2>Lịch hẹn hôm nay</h2>
+            <div class="appointment-list">
+              <div class="appointment-item">09:00 – Bác sĩ Minh (Tim mạch)</div>
+              <div class="appointment-item">10:30 – Bác sĩ Lan (Da liễu)</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Lịch đã hủy hôm nay</h2>
+            <div class="empty-box">Không có lịch nào bị hủy</div>
+          </div>
+
+          <div class="card">
+            <h2>Lịch hẹn sắp tới</h2>
+            <div class="appointment-list">
+              <div class="appointment-item">Ngày mai – 14:00 – Bác sĩ Nam</div>
+              <div class="appointment-item">25/03 – 09:00 – Bác sĩ Hương</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <section class="chat-widget">
+      <div class="chat-header">
+        <div class="chat-brand">
+          <div class="chat-brand-icon">+</div>
+          <span>CliniCare</span>
+        </div>
+        <div class="chat-user">Nguyễn Gia Huy</div>
+      </div>
+
+      <div class="chat-body">
+        <div class="chat-inner">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+              Xin chào, Tôi là AI hỗ trợ y tế. Bạn đang gặp vấn đề gì?
+              <div class="message-time">12:40 PM</div>
+            </div>
+
+            <div class="message user">
+              Tôi bị đau đầu thường xuyên.
+              <div class="message-time">12:41 PM</div>
+            </div>
+
+            <div class="message bot">
+              Đau đầu thường xuyên có thể liên quan đến thiếu ngủ, căng thẳng hoặc vấn đề thần kinh.
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-wrap">
+              <input
+                id="chatInput"
+                class="chat-input"
+                type="text"
+                placeholder="Mô tả triệu chứng của bạn ..."
+              />
+              <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+
+            <div class="chat-note">
+              ⚠ Đây là tư vấn sơ bộ. Vui lòng khám bác sĩ để chẩn đoán chính xác.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

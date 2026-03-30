@@ -1,1 +1,572 @@
-code html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Quản lý lịch hẹn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 210px;
+            height: 100vh;
+            background-color: #2F56C0;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background-color: white;
+            color: #2F56C0;
+            border-radius: 8px;
+            padding: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 210px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 40px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            width: 256px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #2F56C0;
+            box-shadow: 0 0 0 2px rgba(47, 86, 192, 0.2);
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 10px 16px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: #2F56C0;
+            box-shadow: 0 0 0 2px rgba(47, 86, 192, 0.2);
+        }
+
+        .filter-search {
+            position: relative;
+        }
+
+        .filter-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .filter-search input {
+            padding-left: 40px;
+        }
+
+        /* Table */
+        .table-container {
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            padding: 12px 24px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .patient-name {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+
+        .status-confirmed {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Pagination */
+        .pagination {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .pagination-info span {
+            font-weight: 500;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+            background-color: transparent;
+            color: #6b7280;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .pagination-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .pagination-btn.active {
+            background-color: #2F56C0;
+            color: white;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+            </div>
+            <h1 class="logo-text">CliniCare</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="menu-item">Trang chủ</button>
+            <button class="menu-item active">Quản lý lịch hẹn</button>
+            <button class="menu-item">Quản lý khoa và bác sĩ</button>
+            <button class="menu-item">Quản lý chat bot</button>
+            <button class="menu-item">Cài đặt</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="menu-item">Đăng xuất</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <h2 class="header-title">Quản lý lịch hẹn</h2>
+            <div class="header-right">
+                <div class="search-box">
+                    <svg class="search-icon icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Tìm bác sĩ, chuyên khoa...">
+                </div>
+                <span class="user-name">Quản trị viên</span>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-title">Tổng lịch hẹn hôm nay</p>
+                    <h3 class="stat-value">24</h3>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-title">Đã xác nhận</p>
+                    <h3 class="stat-value">18</h3>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-title">Đã hủy</p>
+                    <h3 class="stat-value">6</h3>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-search">
+                        <svg class="filter-search-icon icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" class="filter-input" placeholder="Tìm tên bệnh nhân...">
+                    </div>
+                    <select class="filter-select">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                    <input type="date" class="filter-input">
+                </div>
+            </div>
+
+            <!-- Appointments Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Lịch hẹn gần đây</h3>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã lịch</th>
+                                <th>Họ và tên bệnh nhân</th>
+                                <th>Bác sĩ</th>
+                                <th>Khoa khám</th>
+                                <th>Ngày hẹn</th>
+                                <th>Giờ</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>LH001</td>
+                                <td class="patient-name">Nguyễn Văn An</td>
+                                <td>BS. Trần Thị Mai</td>
+                                <td>Tim mạch</td>
+                                <td>02/04/2026</td>
+                                <td>09:00</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>LH002</td>
+                                <td class="patient-name">Lê Thị Hoa</td>
+                                <td>BS. Phạm Minh Tuấn</td>
+                                <td>Thần kinh</td>
+                                <td>02/04/2026</td>
+                                <td>10:30</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>LH003</td>
+                                <td class="patient-name">Trần Văn Bình</td>
+                                <td>BS. Hoàng Thị Lan</td>
+                                <td>Chỉnh hình</td>
+                                <td>02/04/2026</td>
+                                <td>11:00</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>LH004</td>
+                                <td class="patient-name">Phạm Thị Chi</td>
+                                <td>BS. Nguyễn Quốc Dũng</td>
+                                <td>Nhi khoa</td>
+                                <td>03/04/2026</td>
+                                <td>14:00</td>
+                                <td><span class="status-badge status-cancelled">Đã hủy</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>LH005</td>
+                                <td class="patient-name">Vũ Minh Đức</td>
+                                <td>BS. Trần Thị Mai</td>
+                                <td>Tim mạch</td>
+                                <td>03/04/2026</td>
+                                <td>15:30</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>LH006</td>
+                                <td class="patient-name">Đỗ Thị Nga</td>
+                                <td>BS. Lê Văn Hải</td>
+                                <td>Da liễu</td>
+                                <td>04/04/2026</td>
+                                <td>09:30</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>LH007</td>
+                                <td class="patient-name">Bùi Văn Sơn</td>
+                                <td>BS. Hoàng Thị Lan</td>
+                                <td>Chỉnh hình</td>
+                                <td>04/04/2026</td>
+                                <td>11:30</td>
+                                <td><span class="status-badge status-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>LH008</td>
+                                <td class="patient-name">Ngô Thị Thanh</td>
+                                <td>BS. Phạm Minh Tuấn</td>
+                                <td>Thần kinh</td>
+                                <td>05/04/2026</td>
+                                <td>13:00</td>
+                                <td><span class="status-badge status-cancelled">Đã hủy</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <p class="pagination-info">
+                        Hiển thị <span>1-8</span> trong <span>24</span> lịch hẹn
+                    </p>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn">Trước</button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn">Sau</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

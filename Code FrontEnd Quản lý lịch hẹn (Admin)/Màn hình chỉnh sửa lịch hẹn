@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Chỉnh sửa lịch hẹn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 210px;
+            height: 100vh;
+            background-color: #2F56C0;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background-color: white;
+            color: #2F56C0;
+            border-radius: 8px;
+            padding: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 210px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 40px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            width: 256px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #2F56C0;
+            box-shadow: 0 0 0 2px rgba(47, 86, 192, 0.2);
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            margin: -24px -24px 24px -24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background-color: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f9fafb;
+        }
+
+        .btn-primary {
+            background-color: #2F56C0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2847a0;
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Grid Layout */
+        .form-grid-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Card */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 24px;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .form-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Form Group */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #111827;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-input:disabled {
+            background-color: #e5e7eb;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .form-textarea {
+            resize: none;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        /* Time Slots */
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .time-slot {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: white;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .time-slot:hover {
+            border-color: #9ca3af;
+        }
+
+        .time-slot.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+
+        /* Summary */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .summary-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            text-align: right;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+
+        .status-confirmed {
+            background-color: rgba(16, 185, 129, 0.125);
+            color: #10b981;
+        }
+
+        /* Alert Box */
+        .alert-warning {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .alert-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #78350f;
+            margin-bottom: 12px;
+        }
+
+        .alert-text {
+            font-size: 14px;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        /* Icons */
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .icon-lg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .form-grid-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .time-slots-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <svg class="icon-lg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+            </div>
+            <h1 class="logo-text">CliniCare</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="menu-item">Trang chủ</button>
+            <button class="menu-item active">Quản lý lịch hẹn</button>
+            <button class="menu-item">Quản lý khoa và bác sĩ</button>
+            <button class="menu-item">Quản lý chat bot</button>
+            <button class="menu-item">Cài đặt</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="menu-item">Đăng xuất</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <h2 class="header-title">Quản lý lịch hẹn</h2>
+            <div class="header-right">
+                <div class="search-box">
+                    <svg class="search-icon icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Tìm bác sĩ, chuyên khoa...">
+                </div>
+                <span class="user-name">Quản trị viên</span>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Chỉnh sửa lịch hẹn</h1>
+                <div class="page-actions">
+                    <button class="btn btn-cancel" onclick="window.history.back()">Hủy</button>
+                    <button class="btn btn-primary" onclick="handleSave()">Lưu thay đổi</button>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container">
+                <div class="form-grid-wrapper">
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Thông tin bệnh nhân -->
+                        <div class="card">
+                            <h2 class="card-title">Thông tin bệnh nhân</h2>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Họ và tên <span class="required">*</span></label>
+                                    <input type="text" class="form-input" value="Nguyễn Văn An" disabled>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Số điện thoại <span class="required">*</span></label>
+                                    <input type="text" class="form-input" value="0901 234 567" disabled>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Giới tính <span class="required">*</span></label>
+                                    <input type="text" class="form-input" value="Nam" disabled>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Ngày sinh <span class="required">*</span></label>
+                                    <input type="text" class="form-input" value="15/08/1985" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin lịch khám -->
+                        <div class="card">
+                            <h2 class="card-title">Thông tin lịch khám</h2>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Chọn khoa khám <span class="required">*</span></label>
+                                    <select id="department" class="form-select">
+                                        <option value="Tim mạch" selected>Tim mạch</option>
+                                        <option value="Thần kinh">Thần kinh</option>
+                                        <option value="Nội">Nội</option>
+                                        <option value="Ngoại">Ngoại</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Chọn bác sĩ <span class="required">*</span></label>
+                                    <select id="doctor" class="form-select">
+                                        <option value="BS. Trần Thị Mai" selected>BS. Trần Thị Mai</option>
+                                        <option value="BS. Phạm Minh Tuấn">BS. Phạm Minh Tuấn</option>
+                                        <option value="BS. Nguyễn Văn A">BS. Nguyễn Văn A</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Chọn ngày khám <span class="required">*</span></label>
+                                    <input type="date" id="appointmentDate" class="form-input" value="2026-04-02">
+                                </div>
+                            </div>
+
+                            <div class="form-group form-full" style="margin-top: 16px;">
+                                <label class="form-label">Chọn giờ khám <span class="required">*</span></label>
+                                <div class="time-slots-grid">
+                                    <button class="time-slot" onclick="selectTime('08:00', this)">08:00</button>
+                                    <button class="time-slot active" onclick="selectTime('09:00', this)">09:00</button>
+                                    <button class="time-slot" onclick="selectTime('10:00', this)">10:00</button>
+                                    <button class="time-slot" onclick="selectTime('11:00', this)">11:00</button>
+                                    <button class="time-slot" onclick="selectTime('13:00', this)">13:00</button>
+                                    <button class="time-slot" onclick="selectTime('14:00', this)">14:00</button>
+                                    <button class="time-slot" onclick="selectTime('15:00', this)">15:00</button>
+                                    <button class="time-slot" onclick="selectTime('16:00', this)">16:00</button>
+                                    <button class="time-slot" onclick="selectTime('17:00', this)">17:00</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-full" style="margin-top: 16px;">
+                                <label class="form-label">Mô tả triệu chứng <span class="required">*</span></label>
+                                <textarea id="description" class="form-textarea" rows="3">Bệnh nhân cần khám định kỳ tim mạch, kiểm tra huyết áp và các chỉ số sức khỏe.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <!-- Tóm tắt chỉnh sửa -->
+                        <div class="card">
+                            <h2 class="card-title">Tóm tắt chỉnh sửa</h2>
+
+                            <div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Mã lịch hẹn</p>
+                                    <p class="summary-value">LH001</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Bệnh nhân</p>
+                                    <p class="summary-value">Nguyễn Văn An</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Khoa khám</p>
+                                    <p class="summary-value" id="summaryDepartment">Tim mạch</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Bác sĩ</p>
+                                    <p class="summary-value" id="summaryDoctor">BS. Trần Thị Mai</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Ngày khám</p>
+                                    <p class="summary-value" id="summaryDate">02/04/2026</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Giờ khám</p>
+                                    <p class="summary-value" id="summaryTime">09:00</p>
+                                </div>
+                                <div class="summary-item">
+                                    <p class="summary-label">Trạng thái</p>
+                                    <span class="status-badge status-confirmed">Đã xác nhận</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lưu ý khi chỉnh sửa -->
+                        <div class="alert-warning">
+                            <h3 class="alert-title">Lưu ý khi chỉnh sửa</h3>
+                            <p class="alert-text">Nếu thay đổi bác sĩ, ngày hoặc khung giờ, hệ thống cần gửi lại xác nhận cho bệnh nhân. Hãy kiểm tra trùng lịch trước khi lưu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let selectedTime = '09:00';
+
+        // Time slot selection
+        function selectTime(time, element) {
+            selectedTime = time;
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.time-slot').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            element.classList.add('active');
+            
+            // Update summary
+            document.getElementById('summaryTime').textContent = time;
+        }
+
+        // Update summary when form changes
+        document.getElementById('department').addEventListener('change', function(e) {
+            document.getElementById('summaryDepartment').textContent = e.target.value;
+        });
+
+        document.getElementById('doctor').addEventListener('change', function(e) {
+            document.getElementById('summaryDoctor').textContent = e.target.value;
+        });
+
+        document.getElementById('appointmentDate').addEventListener('change', function(e) {
+            const date = new Date(e.target.value);
+            const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+            document.getElementById('summaryDate').textContent = formatted;
+        });
+
+        // Save handler
+        function handleSave() {
+            const formData = {
+                department: document.getElementById('department').value,
+                doctor: document.getElementById('doctor').value,
+                appointmentDate: document.getElementById('appointmentDate').value,
+                time: selectedTime,
+                description: document.getElementById('description').value
+            };
+
+            console.log('Saving:', formData);
+            alert('Lưu thay đổi thành công!');
+            // window.history.back();
+        }
+    </script>
+</body>
+</html>

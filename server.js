@@ -9,19 +9,25 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: "127.0.0.1",
   user: "root",
   password: "",
-  database: "clinicare"
+  database: "clinicare",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+  // Nếu MySQL máy bạn chạy cổng khác, thêm:
+  // port: 3307
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
     console.error("Kết nối MySQL thất bại:", err);
     return;
   }
   console.log("Kết nối MySQL thành công!");
+  connection.release();
 });
 
 app.get("/api/patient/test", (req, res) => {
@@ -48,6 +54,7 @@ app.post("/api/patient/login", (req, res) => {
 
     db.query(sql, [email], async (err, results) => {
       if (err) {
+        console.error("Lỗi DB login BN:", err);
         return res.status(500).json({
           success: false,
           message: "Lỗi DB: " + err.message
@@ -83,6 +90,7 @@ app.post("/api/patient/login", (req, res) => {
       });
     });
   } catch (error) {
+    console.error("Lỗi server:", error);
     return res.status(500).json({
       success: false,
       message: "Lỗi server."

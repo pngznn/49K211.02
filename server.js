@@ -9,11 +9,6 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.url}`);
-  next();
-});
-
 const db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",
@@ -29,104 +24,68 @@ db.connect((err) => {
   console.log("Kết nối MySQL thành công!");
 });
 
-app.get("/api/test", (req, res) => {
+app.get("/api/patient/test", (req, res) => {
   res.json({
     success: true,
-    message: "Backend dang chay"
+    message: "Backend dang nhap benh nhan dang chay"
   });
 });
 
-app.post("/api/patient/register", async (req, res) => {
+app.post("/api/patient/login", (req, res) => {
   try {
-    console.log("Nhận dữ liệu đăng ký:", req.body);
+    console.log("Nhận dữ liệu đăng nhập bệnh nhân:", req.body);
 
-    const { fullName, email, phone, gender, password, confirmPassword } = req.body;
+    const { email, password, rememberMe } = req.body;
 
-    if (!fullName || !email || !phone || !gender || !password || !confirmPassword) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Vui lòng nhập đầy đủ thông tin."
+        message: "Vui lòng nhập đầy đủ email và mật khẩu."
       });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Email không hợp lệ."
-      });
-    }
+    const sql = "SELECT * FROM patients WHERE email = ?";
 
-    const cleanPhone = phone.replace(/\s/g, "");
-    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
-    if (!phoneRegex.test(cleanPhone)) {
-      return res.status(400).json({
-        success: false,
-        message: "Số điện thoại không hợp lệ."
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "Mật khẩu phải có ít nhất 6 ký tự."
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Mật khẩu xác nhận không khớp."
-      });
-    }
-
-    const checkSql = "SELECT id FROM patients WHERE email = ? OR phone = ?";
-    db.query(checkSql, [email, cleanPhone], async (checkErr, results) => {
-      if (checkErr) {
-        console.error("Lỗi kiểm tra trùng:", checkErr);
+    db.query(sql, [email], async (err, results) => {
+      if (err) {
         return res.status(500).json({
           success: false,
-          message: "Lỗi DB: " + checkErr.message
+          message: "Lỗi DB: " + err.message
         });
       }
 
-      if (results.length > 0) {
-        return res.status(400).json({
+      if (results.length === 0) {
+        return res.status(401).json({
           success: false,
-          message: "Email hoặc số điện thoại đã được đăng ký."
+          message: "Email không tồn tại."
         });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = results[0];
+      const isMatch = await bcrypt.compare(password, user.password);
 
-      const insertSql = `
-        INSERT INTO patients (full_name, email, phone, gender, password)
-        VALUES (?, ?, ?, ?, ?)
-      `;
-
-      db.query(insertSql, [fullName, email, cleanPhone, gender, hashedPassword], (insertErr, result) => {
-        if (insertErr) {
-          console.error("Lỗi INSERT MySQL:", insertErr);
-          return res.status(500).json({
-            success: false,
-            message: "Lỗi DB: " + insertErr.message
-          });
-        }
-
-        console.log("Đăng ký thành công, ID:", result.insertId);
-
-        return res.status(201).json({
-          success: true,
-          message: "Đăng ký tài khoản thành công!",
-          patientId: result.insertId
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: "Mật khẩu không đúng."
         });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Đăng nhập thành công!",
+        patient: {
+          id: user.id,
+          email: user.email,
+          fullName: user.full_name
+        },
+        rememberMe: !!rememberMe
       });
     });
   } catch (error) {
-    console.error("Lỗi server tổng:", error);
     return res.status(500).json({
       success: false,
-      message: "Lỗi server: " + error.message
+      message: "Lỗi server."
     });
   }
 });

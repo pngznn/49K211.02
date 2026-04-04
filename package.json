@@ -1,7 +1,7 @@
 {
-  "name": "dkbnhan",
+  "name": "dn-bn",
   "version": "1.0.0",
-  "description": "Backend dang ky benh nhan",
+  "description": "Backend dang nhap benh nhan",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

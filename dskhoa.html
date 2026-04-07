@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Danh sách khoa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3152B8;
+            --bg-sidebar: #3152B8;
+            --white: #ffffff;
+            --bg-canvas: #F0F2F5; 
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "Be Vietnam Pro", sans-serif; background: var(--bg-sidebar); overflow: hidden; }
+
+        .app-container { display: flex; height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; display: flex; flex-direction: column; padding: 25px 0; flex-shrink: 0; color: white; }
+        .sidebar-header { display: flex; align-items: center; padding: 0 25px 35px 25px; }
+        .logo-group { display: flex; align-items: center; gap: 12px; }
+        .logo-box { background: white; color: var(--primary); width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
+        .brand-name { font-weight: 700; font-size: 22px; letter-spacing: -0.5px; }
+        .nav-menu { flex: 1; }
+        .nav-item { display: block; padding: 14px 25px; color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 15px; transition: 0.2s; cursor: pointer; border-radius: 12px; margin: 0 15px 5px 15px; }
+        .nav-item.active { background: rgba(255, 255, 255, 0.2); color: white; font-weight: 600; }
+        .logout-item { margin-top: auto; border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 20px 45px; }
+
+        /* --- CONTENT AREA --- */
+        .content-wrapper { flex: 1; background: var(--bg-canvas); display: flex; flex-direction: column; overflow: hidden; }
+        .header { height: 70px; display: flex; align-items: center; justify-content: flex-end; padding: 0 40px; background: var(--white); border-bottom: 1px solid #e2e8f0; }
+        .search-bar { background: #F8FAFC; padding: 8px 18px; border-radius: 12px; width: 380px; display: flex; align-items: center; border: 1px solid #e2e8f0; }
+        .search-bar input { border: none; background: transparent; outline: none; margin-left: 12px; width: 100%; font-size: 14px; color: #475569; }
+        .user-name { font-weight: 600; margin-left: 25px; color: #334155; }
+
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .page-title { color: var(--primary); font-size: 32px; font-weight: 800; margin-bottom: 35px; text-transform: uppercase; }
+
+        .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .dept-card { background: var(--white); border-radius: 16px; padding: 60px 30px; text-align: center; border: 1px solid #e2e8f0; transition: 0.3s; cursor: pointer; }
+        .dept-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-color: var(--primary); }
+        .dept-name { font-size: 20px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 18px; }
+        .dept-info { font-size: 16px; color: #475569; margin: 6px 0; }
+
+        /* --- MODALS --- */
+        .patient-modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal-content { background: #F8FAFC; width: 90%; max-width: 1000px; border-radius: 24px; padding: 40px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); animation: modalFadeIn 0.3s ease; }
+
+        @keyframes modalFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .close-modal, .close-profile { position: absolute; right: 25px; top: 20px; font-size: 30px; cursor: pointer; color: #64748b; z-index: 100; }
+
+        .modal-header { text-align: center; margin-bottom: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .modal-header h2 { color: var(--primary); font-size: 28px; margin-bottom: 5px; text-transform: uppercase; }
+
+        .doctor-list-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .patient-dr-card { background: white; border-radius: 16px; padding: 25px 20px; text-align: center; border: 1px solid #e2e8f0; transition: 0.3s ease; cursor: pointer; }
+        .dr-avatar-circle { width: 70px; height: 70px; background: #E0E7FF; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--primary); }
+        .dr-name-text { font-weight: 700; color: #1e292b; font-size: 17px; margin-bottom: 4px; }
+        .dr-position-text { color: #64748b; font-size: 14px; margin-bottom: 15px; min-height: 20px; }
+
+        .btn-book { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; font-family: inherit; }
+        .btn-book:hover { background: #1e3a8a; }
+
+        .chat-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background-color: #3b5bcc; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-group">
+                    <div class="logo-box"><i class="fa-solid fa-plus"></i></div>
+                    <div class="brand-name">CliniCare</div>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">Trang chủ</div>
+                <div class="nav-item">Đặt lịch</div>
+                <div class="nav-item">Lịch hẹn của tôi</div>
+                <div class="nav-item">Hồ sơ bệnh nhân</div>
+                <div class="nav-item active">Khoa và bác sĩ</div>
+            </div>
+            <div class="nav-item logout-item">Đăng xuất</div>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="header">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8;"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm bác sĩ, chuyên khoa...">
+                </div>
+                <div class="user-name">Abc</div>
+            </div>
+
+            <div class="main-content">
+                <h1 class="page-title">Danh sách khoa</h1>
+                <div id="deptGrid" class="dept-grid"></div>
+            </div>
+        </div>
+
+        <div id="doctorModal" class="patient-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <h2 id="modalDeptName">TÊN KHOA</h2>
+                    <p>Đội ngũ bác sĩ tận tâm, giàu kinh nghiệm</p>
+                </div>
+                <div id="doctorGrid" class="doctor-list-container"></div>
+            </div>
+        </div>
+
+        <div id="doctorProfileModal" class="patient-modal">
+            <div class="modal-content" style="max-width: 850px; background: #fff;">
+                <span class="close-profile">&times;</span>
+                
+                <div style="display: flex; gap: 40px; padding-top: 10px; align-items: start;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid #f1f5f9; padding-right: 20px;">
+                        <div style="width: 140px; height: 140px; background: #EEF2FF; border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 60px; color: #3152B8;">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+                        <h2 id="p-name" style="margin: 0; color: #1e293b; font-size: 22px; font-weight: 700;"></h2>
+                        <p id="p-rank" style="color: #64748b; margin: 10px 0 25px; font-size: 15px; font-weight: 500;"></p>
+                        <button class="btn-book" style="width: 100%; padding: 15px; font-size: 16px;">ĐẶT LỊCH KHÁM NGAY</button>
+                    </div>
+
+                    <div style="flex: 2;">
+                        <h3 style="color: #3152B8; font-size: 18px; margin-bottom: 20px; border-left: 4px solid #3152B8; padding-left: 15px; text-transform: uppercase;">Thông tin bác sĩ</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                            <div><strong style="color: #64748b; font-size: 11px; display: block; text-transform: uppercase;">Giới tính</strong> <span id="p-gender" style="color: #1e293b; font-weight: 600;"></span></div>
+                            <div><strong style="color: #64748b; font-size: 11px; display: block; text-transform: uppercase;">Ngày sinh</strong> <span id="p-dob" style="color: #1e293b; font-weight: 600;"></span></div>
+                            <div><strong style="color: #64748b; font-size: 11px; display: block; text-transform: uppercase;">Kinh nghiệm</strong> <span id="p-exp" style="color: #1e293b; font-weight: 600;"></span></div>
+                            <div style="grid-column: span 1;">&nbsp;</div>
+                            
+                            <div style="grid-column: span 2;"><strong style="color: #64748b; font-size: 11px; display: block; text-transform: uppercase;">Chuyên khoa</strong> <span id="p-spec" style="color: #1e293b; font-weight: 600;"></span></div>
+                        </div>
+
+                        <h3 style="color: #3152B8; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Thời gian làm việc</h3>
+                        <div id="p-schedule" style="margin-bottom: 30px;"></div>
+
+                        <h3 style="color: #3152B8; font-size: 18px; margin-bottom: 10px; text-transform: uppercase;">Mô tả kinh nghiệm</h3>
+                        <p id="p-desc" style="line-height: 1.6; color: #475569; font-size: 14px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script src="dskhoa.js"></script>
+</body>
+</html>

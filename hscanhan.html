@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Hồ sơ bệnh nhân</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3152B8;
+            --bg-sidebar: #3152B8;
+            --bg-active: #5371D1; 
+            --bg-content: #F4F7FE; 
+            --bg-card-grey: #F1F5F9; 
+            --text-detail: #475569; 
+            --border-color: #E2E8F0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: "Be Vietnam Pro", sans-serif; 
+            background: var(--bg-sidebar); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 250px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 25px 0 0 0;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 40px 20px;
+            font-weight: 700;
+            font-size: 20px;
+            gap: 10px;
+        }
+
+        .nav-list { list-style: none; padding: 0 15px; flex: 1; }
+        
+        .nav-item {
+            display: block;
+            padding: 12px 18px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover { 
+            background: rgba(255, 255, 255, 0.15); 
+            color: #ffffff; 
+        }
+
+        .nav-item.active { 
+            background: var(--bg-active); 
+            color: white; 
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-section {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .wrapper {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            background: #F1F5F9;
+            padding: 8px 15px;
+            border-radius: 10px;
+            width: 320px;
+            display: flex;
+            align-items: center;
+            margin-right: 25px;
+        }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 13px; margin-left: 8px; }
+
+        .user-profile { font-weight: 700; color: #1E293B; font-size: 14px; }
+
+        .main-content {
+            flex: 1;
+            background: var(--bg-content);
+            padding: 35px;
+            overflow-y: auto;
+        }
+
+        .page-title { color: var(--primary); font-size: 26px; font-weight: 800; margin-bottom: 25px; }
+
+        .info-layout { display: flex; gap: 25px; }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .left-card { width: 320px; text-align: center; }
+        .right-card { flex: 1; }
+
+        .avatar-wrap {
+            width: 120px; height: 120px;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 55px; color: var(--primary);
+        }
+
+        .patient-name { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .patient-id { color: var(--primary); font-weight: 700; margin-bottom: 15px; }
+        .tag { background: var(--bg-card-grey); padding: 7px 22px; border-radius: 25px; font-size: 14px; color: #64748B; font-weight: 500; }
+
+        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; color: #1E293B; }
+        .divider { height: 1px; background: var(--border-color); margin: 20px 0; }
+
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .grid-info p { color: var(--text-detail); font-size: 15px; font-weight: 400; }
+        .grid-info span { color: var(--text-detail); font-weight: 500; margin-left: 5px; }
+
+        .health-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .stat-item { 
+            background: var(--bg-card-grey); 
+            padding: 18px 10px; 
+            border-radius: 12px; 
+            text-align: center; 
+            border: 1px solid #E2E8F0; 
+        }
+        .stat-item label { display: block; font-size: 13px; color: #64748B; margin-bottom: 6px; }
+        .stat-item b { color: var(--primary); font-size: 17px; font-weight: 700; }
+
+        .bottom-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-top: 25px; }
+        .bottom-summary h4 { font-size: 17px; font-weight: 800; margin-bottom: 12px; color: #1E293B; }
+        
+        .list-unstyled { list-style: none; padding: 0; }
+        .list-unstyled li { font-size: 15px; color: var(--text-detail); line-height: 1.8; }
+        .summary-text { font-size: 15px; color: var(--text-detail); line-height: 1.8; }
+
+        /* --- NÚT CHAT MỚI --- */
+        .chat-btn {
+            position: fixed;   
+            bottom: 30px;      
+            right: 30px;       
+            width: 60px;
+            height: 60px;
+            background-color: #3b5bcc;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .chat-btn:hover {
+            transform: translateY(-5px); /* Bay nhẹ lên khi di chuột vào */
+            background-color: #2d46a3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-square-plus"></i> CliniCare
+        </div>
+        
+        <nav class="nav-list">
+            <a href="#" class="nav-item">Trang chủ</a>
+            <a href="#" class="nav-item">Đặt lịch</a>
+            <a href="#" class="nav-item">Lịch hẹn của tôi</a>
+            <a href="#" class="nav-item active">Hồ sơ bệnh nhân</a>
+            <a href="#" class="nav-item">Khoa và bác sĩ</a>
+        </nav>
+
+        <div class="logout-section">
+            <a href="#" class="nav-item">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="top-header">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass" style="color:#94a3b8"></i>
+                <input type="text" placeholder="Tìm kiếm bác sĩ, chuyên khoa...">
+            </div>
+            <div class="user-profile">Abc</div>
+        </div>
+
+        <div class="main-content">
+            <h1 class="page-title">HỒ SƠ BỆNH NHÂN - LÊ VĂN A (BN001)</h1>
+
+            <div class="info-layout">
+                <div class="card left-card">
+                    <div class="avatar-wrap"><i class="fa-solid fa-user"></i></div>
+                    <h2 class="patient-name">LÊ VĂN A</h2>
+                    <p class="patient-id">Mã BN: BN001</p>
+                    <span class="tag">Nam, 51 tuổi</span>
+                </div>
+
+                <div class="card right-card">
+                    <h3 class="section-header">THÔNG TIN CHUNG</h3>
+                    <div class="divider"></div>
+
+                    <h4 style="margin-bottom: 15px; font-weight: 700;">Thông tin cá nhân</h4>
+                    <div class="grid-info">
+                        <p>Họ và tên: <span>Lê Văn A</span></p>
+                        <p>CMND/CCCD: <span>042305004221</span></p>
+                        <p>Ngày sinh: <span>17/05/1975</span></p>
+                        <p>Mã số BH: <span>---</span></p>
+                        <p>Giới tính: <span>Nam</span></p>
+                        <p>SĐT: <span>0835634672</span></p>
+                        <p style="grid-column: span 2;">Địa chỉ: <span>---</span></p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h4 style="margin-bottom: 15px; font-weight: 700;">Thông tin sức khoẻ cơ bản</h4>
+                    <div class="health-stats">
+                        <div class="stat-item"><label>Chiều cao:</label><b>[177 cm]</b></div>
+                        <div class="stat-item"><label>Cân nặng:</label><b>[65 kg]</b></div>
+                        <div class="stat-item"><label>BMI:</label><b>[22.5 - Bình thường]</b></div>
+                        <div class="stat-item"><label>Nhóm máu:</label><b>[A]</b></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="bottom-summary">
+                        <div>
+                            <h4>Tiền sử bệnh lý</h4>
+                            <ul class="list-unstyled">
+                                <li>Viêm dạ dày</li>
+                                <li>Tăng huyết áp</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Dị ứng</h4>
+                            <p class="summary-text">Không có dữ liệu</p>
+                        </div>
+                        <div>
+                            <h4>Ghi chú</h4>
+                            <p class="summary-text">Thường xuyên tái khám định kỳ mỗi 3 tháng.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-btn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+        </svg>
+    </div>
+
+    <script src="hosocanhan.js"></script>
+</body>
+</html>

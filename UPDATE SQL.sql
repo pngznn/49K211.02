@@ -1079,3 +1079,18 @@ ORDER BY ma_bac_si;
 DELETE FROM dbo.Trang_thai
 WHERE ma_trang_thai = 'TT04';
 GO
+
+ALTER TABLE Tai_khoan ALTER COLUMN mat_khau VARCHAR(255);
+GO
+USE CLINICARE_GROUP2;
+GO
+
+-- 1. Xóa hết dữ liệu trong bảng thông tin người dùng trước (vì nó tham chiếu tới Tai_khoan)
+DELETE FROM Thong_tin_nguoi_dung;
+
+-- 2. Xóa hết dữ liệu trong bảng tài khoản
+DELETE FROM Tai_khoan;
+
+-- 3. (Tùy chọn) Nếu Nhi muốn reset cả Admin cũ để tạo lại qua API cho chuẩn:
+-- Lệnh trên đã xóa sạch rồi, bây giờ Nhi có thể dùng Postman/Thunder Client để tạo lại.
+GO

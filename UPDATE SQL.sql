@@ -1,4 +1,4 @@
-﻿CREATE DATABASE CLINICARE_GROUP2;
+CREATE DATABASE CLINICARE_GROUP2;
 GO
 
 USE CLINICARE_GROUP2;
@@ -1051,4 +1051,31 @@ INSERT INTO Khung_gio_kham (ma_khung_gio, thoi_luong_phut, ma_bac_si) VALUES
 ('KG93', 30, 'BS93'),
 ('KG94', 30, 'BS94'),
 ('KG95', 30, 'BS95');
+GO
+USE [CLINICARE_GROUP2]
+INSERT INTO Cau_hinh_gio_lam_bac_si (
+    ma_cau_hinh,
+    ma_bac_si,
+    ngay_hieu_luc,
+    gio_sang_bat_dau,
+    gio_sang_ket_thuc,
+    gio_chieu_bat_dau,
+    gio_chieu_ket_thuc,
+    trang_thai,
+    ghi_chu
+)
+SELECT
+    'CH' + RIGHT('000' + CAST(ROW_NUMBER() OVER (ORDER BY ma_bac_si) AS VARCHAR(3)), 3) AS ma_cau_hinh,
+    ma_bac_si,
+    CAST('2026-04-01' AS DATE) AS ngay_hieu_luc,
+    CAST('07:00:00' AS TIME) AS gio_sang_bat_dau,
+    CAST('11:00:00' AS TIME) AS gio_sang_ket_thuc,
+    CAST('13:30:00' AS TIME) AS gio_chieu_bat_dau,
+    CAST('16:30:00' AS TIME) AS gio_chieu_ket_thuc,
+    N'Đang áp dụng' AS trang_thai,
+    N'Làm việc từ thứ 2 đến thứ 6' AS ghi_chu
+FROM Bac_si
+ORDER BY ma_bac_si;
+DELETE FROM dbo.Trang_thai
+WHERE ma_trang_thai = 'TT04';
 GO

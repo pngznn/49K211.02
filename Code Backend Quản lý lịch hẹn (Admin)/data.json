@@ -1,0 +1,22 @@
+[
+  {
+    "id": "LH001",
+    "name": "Nguyễn Văn An",
+    "doctor": "BS. Trần Thị Mai",
+    "department": "Tim mạch",
+    "date": "2026-04-02",
+    "time": "09:00",
+    "status": "confirmed",
+    "note": "Khám tim định kỳ"
+  },
+  {
+    "id": "LH002",
+    "name": "Lê Thị Hoa",
+    "doctor": "BS. Phạm Minh Tuấn",
+    "department": "Thần kinh",
+    "date": "2026-04-02",
+    "time": "10:30",
+    "status": "confirmed",
+    "note": "Đau đầu"
+  }
+]

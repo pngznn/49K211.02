@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniCare - Trang chủ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F5F6F8;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 210px;
+            height: 100vh;
+            background-color: #2F56C0;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background-color: white;
+            color: #2F56C0;
+            border-radius: 8px;
+            padding: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: #F5F6F8;
+            margin-left: 210px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .top-nav {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+        }
+
+        .top-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-left: auto;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 280px;
+            padding: 9px 16px 9px 38px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            border-radius: 8px;
+            border: 1px solid #D1D5DB;
+            color: #111827;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: #2F56C0;
+            box-shadow: 0 0 0 3px rgba(47, 86, 192, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: #9CA3AF;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        .content-inner {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: #2F56C0;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+        }
+
+        .hero button {
+            padding: 12px 32px;
+            background: white;
+            color: #2F56C0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Doctors Section */
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #F3F4F6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .doctor-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2F56C0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 18px;
+            margin: 0 auto 12px;
+        }
+
+        .doctor-info {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .doctor-name {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .doctor-specialty {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .doctor-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .doctor-status.available { background: #F0FDF4; color: #15803D; }
+        .doctor-status.busy { background: #F3F4F6; color: #6B7280; }
+
+        .doctor-btn {
+            width: 100%;
+            padding: 8px;
+            background: #2F56C0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Departments Grid */
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .department-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #F3F4F6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .department-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .department-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            text-align: center;
+        }
+
+        /* Nút Chatbot */
+        .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #3b5bcc;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            z-index: 1000;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            background-color: #2F56C0;
+            box-shadow: 0 8px 16px rgba(47, 86, 192, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text">CliniCare</h1>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="menu-item active"><span>Trang chủ</span></button>
+                <button class="menu-item"><span>Đặt lịch</span></button>
+                <button class="menu-item"><span>Lịch hẹn của tôi</span></button>
+                <button class="menu-item"><span>Hồ sơ bệnh nhân</span></button>
+                <button class="menu-item"><span>Khoa và bác sĩ</span></button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="menu-item"><span>Đăng xuất</span></button>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-nav">
+                <div class="top-nav-right">
+                    <div class="user-section">
+                        <div class="user-name">Abc</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="content-inner">
+                    <div class="hero">
+                        <h1>Chăm sóc sức khỏe dễ dàng hơn</h1>
+                        <p>Tìm kiếm bác sĩ và đặt lịch nhanh chóng</p>
+                        <button>Đặt lịch ngay</button>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Bác sĩ nổi bật</h2>
+                        <div class="doctors-grid">
+                            <div class="doctor-card">
+                                <div class="doctor-avatar">N</div>
+                                <div class="doctor-info">
+                                    <div class="doctor-name">BS. Nguyễn Minh</div>
+                                    <div class="doctor-specialty">Tim mạch</div>
+                                </div>
+                                <button class="doctor-btn">Đặt lịch</button>
+                            </div>
+                            <div class="doctor-card">
+                                <div class="doctor-avatar">T</div>
+                                <div class="doctor-info">
+                                    <div class="doctor-name">BS. Trần Thu</div>
+                                    <div class="doctor-specialty">Da liễu</div>
+                                </div>
+                                <button class="doctor-btn">Đặt lịch</button>
+                            </div>
+                            <div class="doctor-card">
+                                <div class="doctor-avatar">H</div>
+                                <div class="doctor-info">
+                                    <div class="doctor-name">BS. Lê Hoàng</div>
+                                    <div class="doctor-specialty">Nhi khoa</div>
+                                </div>
+                                <button class="doctor-btn">Đặt lịch</button>
+                            </div>
+                            <div class="doctor-card">
+                                <div class="doctor-avatar">L</div>
+                                <div class="doctor-info">
+                                    <div class="doctor-name">BS. Phạm Lan</div>
+                                    <div class="doctor-specialty">Thần kinh</div>
+                                </div>
+                                <button class="doctor-btn">Đặt lịch</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Chuyên khoa</h2>
+                        <div class="departments-grid">
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(239, 68, 68, 0.08);">
+                                    <svg fill="none" stroke="#EF4444" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="department-name">Tim mạch</div>
+                            </div>
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(245, 158, 11, 0.08);">
+                                    <svg fill="none" stroke="#F59E0B" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                </div>
+                                <div class="department-name">Da liễu</div>
+                            </div>
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(16, 185, 129, 0.08);">
+                                    <svg fill="none" stroke="#10B981" viewBox="0 0 24 24"><path d="M9 12h.01M15 12h.01M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20 8v5a2 2 0 0 1-.709 1.528l-7 5.999a2 2 0 0 1-2.582 0l-7-5.999A2 2 0 0 1 4 13V8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20 8 14.5 2.5a2 2 0 0 0-1.4-.586H10.9a2 2 0 0 0-1.4.586L4 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="department-name">Nhi khoa</div>
+                            </div>
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(139, 92, 246, 0.08);">
+                                    <svg fill="none" stroke="#8B5CF6" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="department-name">Thần kinh</div>
+                            </div>
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(59, 130, 246, 0.08);">
+                                    <svg fill="none" stroke="#3B82F6" viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="20" cy="10" r="2" stroke-width="2"></circle></svg>
+                                </div>
+                                <div class="department-name">Nội tổng quát</div>
+                            </div>
+                            <div class="department-card">
+                                <div class="department-icon" style="background: rgba(236, 72, 153, 0.08);">
+                                    <svg fill="none" stroke="#EC4899" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke-width="2"></circle></svg>
+                                </div>
+                                <div class="department-name">Mắt</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+            </svg>
+        </div>
+    </div>
+</body>
+</html>

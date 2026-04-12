@@ -1,0 +1,10 @@
+Thông tin accounts:
+1. Admin:
+- Tài khoản email: admin@gmail.com
+- Mật khẩu: 123456
+
+2. Người dùng (Bệnh nhân):
+- Tài khoản: ngan03305@gmail.com
+- Mật khẩu: 123456
+
+- Tài khoản người dùng có thể tự đăng ký trên hệ thống và đăng nhập vào để test
